@@ -1,6 +1,6 @@
 cuadrantes <- readOGR(file.path("shps_2016", "cuadrantes_population.shp"), 
                       layer = "cuadrantes_population")
-names(cuadrantes@data) <- c("delegacion", "zona", "cve_zona", "no_region", "sector", "sector2", 
+names(cuadrantes@data) <- c("municipio", "zona", "cve_zona", "no_region", "sector", "sector2", 
                             "sector_hoyodecrimen",
                             "cve_sector", "no_cuadrante", "id", "x", "y", "SUMPOB1")
 cuadrantes@data$x <- NULL
@@ -20,11 +20,14 @@ mcrime <- local({
   pop <- cuadrantes@data
   
   mcrime <- merge(mcrime, pop, by.x = "cuadrante", by.y = "id", all.x = TRUE)
-  names(mcrime) <- c("cuadrante", "crime", "date", "count", "year", "delegacion", 
+  names(mcrime) <- c("cuadrante", "crime", "date", "count", "year", "municipio", 
                      "zona", "cve_zona", "no_region", "sector", "sector2", 
                      "sector_hoyodecrimen",
                      "cve_sector", 
                      "no_cuadrante", "population")
+  
+  muns <- read.csv(file.path("clean-data", "municipios.csv"))
+  mcrime <- merge(mcrime, muns, all.x = TRUE)
   mcrime <- mcrime[order(mcrime$cuadrante, mcrime$crime, mcrime$date),] 
   write.csv(mcrime, file.path("clean-data", "cuadrantes-hoyodecrimen.csv"), row.names = FALSE)
   zip(file.path("clean-data", "cuadrantes.csv.zip"), 
