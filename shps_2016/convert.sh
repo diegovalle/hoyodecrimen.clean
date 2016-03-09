@@ -12,7 +12,7 @@ topojson \
         -s 1e-10 \
 	--projection 'd3.geo.mercator()' \
 	-o topojson/cuadrantes.json \
-	--properties sector=Sector_hoy,id=Nomenclatu \
+	--properties sector=Sector_hoy,cuadrante=Nomenclatu \
 	cuadrantes=cuadrantes.shp
 
 topojson --id-property=sector \
