@@ -1,8 +1,8 @@
-topojson --id-property=id \
+topojson --id-property=Nomenclatu \
 	-s 1e-10 \
         -o topojson/cuadrantes-interactive.json \
-        --properties id=Nomenclatu,sector=Sector_hoy\
-        -- sectores=cuadrantes.shp
+        --properties cuadrante=Nomenclatu,sector=Sector_hoy\
+        -- cuadrantes=cuadrantes.shp
 
 topojson \
 	--width 960 \
@@ -33,8 +33,10 @@ topojson \
 	-- sectores=sectores.shp
 
 
-ogr2ogr -f "GeoJSON" geojson/cuadrantes.geojson cuadrantes.shp -sql "SELECT Nomenclatu AS cuadrante, Deleg AS delegacion, Zona AS zona, Sector AS sector1, Sector2 AS sector2, Sector_hoy as sector, from cuadrantes"
-ogr2ogr -f "GeoJSON" geojson/sectores.geojson sectores.shp
+ogr2ogr -f "GeoJSON" geojson/cuadrantes.json cuadrantes.shp -sql "SELECT Nomenclatu AS cuadrante, Deleg AS municipio, Zona AS zona, Sector_hoy as sector, cvegeo AS cve_mun from cuadrantes left join '../clean-data/municipios.csv'.municipios on cuadrantes.Deleg = municipios.municipio"
+ogr2ogr -f "GeoJSON" geojson/sectores.json sectores.shp -sql "SELECT sector AS sector, cvegeo AS cve_mun, municipio from sectores left join '../clean-data/municipios.csv'.municipios on sectores.sector = municipios.sector" 
 
-shp2pgsql -s 4326 -W "latin1" -I -D cuadrantes.shp cuadrantes_poly > sql/cuadrantes_poly.sql
+
+
+shp2pgsql -s 4326 -W "latin1" -I -D cuadrantes_sql.shp cuadrantes_poly > sql/cuadrantes_poly.sql
 #scp cuadrantes_poly.sql 543fe7165973cae5d30000c1@apihoyodecrimen-valle.rhcloud.com:app-root/data/
