@@ -11,6 +11,18 @@ proj4string(spp)
 writeOGR(spp, "shps_2016/.", "sectores", driver="ESRI Shapefile",
          overwrite_layer = TRUE)
 
+# m <- readOGR("shps_2016/cuadrantes.shp", "cuadrantes")
+# region <- gUnaryUnion(m, id = m@data$Deleg)
+# df <- unique(municipios[,c("cvegeo", "municipio")])
+# row.names(df) <- df$municipio
+# plot(region)
+# spp <- SpatialPolygonsDataFrame(region,
+#                                 data = df)
+# proj4string(spp)
+# writeOGR(spp, file.path("shps_2016", "geojson", "municipios.json"), 
+#          layer="municipios", driver="GeoJSON",
+#          overwrite_layer = TRUE)
+
 # 
 # m <- readOGR("shps_2016/manzanas_points.shp", "manzanas_points")
 # m@data <- m@data[ ,c(1:2, ncol(m@data))]
