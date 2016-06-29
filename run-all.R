@@ -1,5 +1,5 @@
 
-lastGood = "2016-01-01"
+lastGood = "2016-05-01"
 
 
 source(file.path("src", "packages.R"))

@@ -28,7 +28,7 @@ mcrime <- local({
       names(df)[26:37] <- as.character(as.yearmon(seq(as.Date("2015-01-01"),
                                                       as.Date("2015-12-01"), 
                                                       "month")))
-      names(df)[38:38] <- as.character(as.yearmon(seq(as.Date("2016-01-01"),
+      names(df)[38:42] <- as.character(as.yearmon(seq(as.Date("2016-01-01"),
                                                       as.Date(lastGood), 
                                                       "month")))
       #names(df)[34] <- "Total.2015"
@@ -121,7 +121,7 @@ mcrime <- local({
     return(cuadrantes)
   }
   
-  crime <- rbind(getNames("RESP SIeIP 065416.csv", 1))
+  crime <- getNames("275416.csv", 1)
   
   
 #   crime$year <- year(as.yearmon(crime$date))
@@ -144,6 +144,8 @@ mcrime <- local({
 #   mcrime <- crime
   filter(crime, date <= lastGood)
 })
+
+
 ## Clean the sspdf crime data from the pdf turned into 3 excel files
 
 # mcrime <- local({
