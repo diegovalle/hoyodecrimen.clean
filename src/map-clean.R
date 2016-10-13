@@ -52,8 +52,8 @@ mcrime <- local({
   mcrime <- merge(mcrime, muns, all.x = TRUE)
   mcrime <- mcrime[order(mcrime$cuadrante, mcrime$crime, mcrime$date),] 
   write.csv(mcrime, file.path("clean-data", "cuadrantes-hoyodecrimen.csv"), row.names = FALSE)
-  zip(file.path("clean-data", "cuadrantes.csv.zip"), 
-      file.path("clean-data", "cuadrantes-hoyodecrimen.csv"))
+  zip(zipfile = file.path("clean-data", "cuadrantes.csv.zip"), 
+      files = file.path("clean-data", "cuadrantes-hoyodecrimen.csv"))
   
   mcrime2 <- mcrime[ ,c("cuadrante", "crime", "date", "count", "year",
                         "sector", "population")]

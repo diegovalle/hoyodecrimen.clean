@@ -1,9 +1,10 @@
 
-lastGood = "2016-05-01"
-
-
 source(file.path("src", "packages.R"))
-source(file.path("src", "clean.R"))
+
+lastGood = as.Date(as.yearmon("2016-09-01"), frac = 1)
+
+#source(file.path("src", "clean.R"))
+source(file.path("src", "clean-daily.R"))
 source(file.path("src", "map-clean.R"))
 #source(file.path("src", "graphs.R"))
 #source(file.path("src", "json.R"))
