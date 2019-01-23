@@ -2,14 +2,43 @@
 
 
 ## the data for Apr 2014 is incomplete!
-date.total <- ddply(mcrime, .(crime, date), summarise,
-                       count = sum(count))
+
+month.total <- mcrime %>%
+  group_by(crime, date) %>%
+  summarise(count = sum(count))
 na.omit(unique(mcrime$crime))
-ggplot(date.total, 
+ggplot(month.total, 
        aes(as.Date(date), count)) +
   geom_line() +
   facet_wrap(~crime, scales = "free")
 ggsave(file.path("graphs", "incomplete.png"), dpi = 100, width = 11, height = 8)
+
+df$datetime <- ymd_hm(str_c(df$date, df$hour))
+hour <- df %>%
+  mutate(hour = hour(datetime)) %>%
+  group_by(crime, hour) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+hour <- hour %>%
+  group_by(crime) %>%
+  summarise(median = hour[which.max(count)]) %>%
+  left_join(hour, by = "crime")
+
+hour$hour <- factor(hour$hour, levels = c(5:23, 0:4, NA))
+# reorder the median time of occurance to start at night
+hour$crime <- reorder(as.factor(hour$crime), hour$median, function(x) {(x[1] +2) %% 24})
+
+ggplot(hour, aes(hour, count, group = crime)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ crime, scales = "free_y") +
+  scale_x_discrete(breaks = c(6, 12, 18, 0, NA), labels = c("6" = "6:00 AM", "12" = "12:00 PM", 
+                                                        "18" = "6:00 PM", "0"="12:00 AM", "NA"="NA")) + 
+  xlab("hora") +
+  ylab("número de crímenes") +
+  ggtitle("Número de crímenes por hora en la Ciudad de México (Ene 2013 - Sep 2016)")
+
+
 #mcrime <- subset(mcrime, !date %in% as.yearmon(badMonths))
 
 ggplot(subset(date.total, crime %in% c("ROBO EN MICROBUS C.V.",

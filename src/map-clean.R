@@ -53,7 +53,8 @@ mcrime <- local({
   mcrime <- mcrime[order(mcrime$cuadrante, mcrime$crime, mcrime$date),] 
   write.csv(mcrime, file.path("clean-data", "cuadrantes-hoyodecrimen.csv"), row.names = FALSE)
   zip(zipfile = file.path("clean-data", "cuadrantes.csv.zip"), 
-      files = file.path("clean-data", "cuadrantes-hoyodecrimen.csv"))
+      files = c(file.path("clean-data", "cuadrantes-hoyodecrimen.csv"),
+                file.path("clean-data", "crime-lat-long.csv")))
   
   mcrime2 <- mcrime[ ,c("cuadrante", "crime", "date", "count", "year",
                         "sector", "population")]
