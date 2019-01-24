@@ -19,6 +19,7 @@ library(rgeos)
 library(maps)
 library(maptools)
 library(sp)
+library(tidyr)
 options(stringsAsFactors = FALSE)
 
 #library(Rcompression)

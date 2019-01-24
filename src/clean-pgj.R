@@ -140,6 +140,10 @@ df$crime <- str_replace_all(df$crime,
                             "ROBO A BORDO DE TAXI C.V.")
 
 
+# remove accents
+df$crime <- iconv(df$crime, from="UTF-8", to="ASCII//TRANSLIT")
+
+
 df %>%
   filter(crime == "HOMICIDIO DOLOSO") %>%
   group_by(Año, Categoría.de.delito) %>%
@@ -159,16 +163,18 @@ cuadrantes <- cuadrantes %>%
   summarise(count = n()) %>%
   ungroup()
 cuadrantes <-  full_join(cuadrantes, 
-                         expand(cuadrantes, date, cuadrante, crime),
-                         by = c("cuadrante", "crime", "date"))
+                         tidyr::expand(cuadrantes, date, cuad_map@data$Nomenclatu, crime),
+                         by = c("cuadrante" = "cuad_map@data$Nomenclatu", "crime", "date"))
 cuadrantes <-  left_join(cuadrantes, 
-                         unique(df[, c("cuadrante", "sector", "population")]),
-                         by = "cuadrante")
+                         unique(cuad_map@data[, c("Nomenclatu", "Sector_hoy", "SUMPOB1")]),
+                         by = c("cuadrante" = "Nomenclatu")) %>%
+  rename("sector" = "Sector_hoy", "population" = "SUMPOB1")
 cuadrantes <-   cuadrantes %>%
   mutate(date = str_c(date, "-01")) %>%
   mutate(year = str_sub(date, 1, 4)) %>%
   arrange(cuadrante, crime, date)
 cuadrantes$count[is.na(cuadrantes$count)] <- 0
+cuadrantes$sector[is.na(cuadrantes$sector)] <- "NO ESPECIFICADO"
 cuadrantes <- cuadrantes[ ,c("cuadrante", "crime", "date", "count", "year", 
                       "sector", "population")]
 write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"), row.names = FALSE)
@@ -181,10 +187,12 @@ df %>%
   mutate(date = fast_strptime(str_replace(df$Fecha.inicio, "0([5|6]):00$", "0\\100"), 
                               format = "%Y-%m-%dT%H:%M:%S%z",
                               lt = FALSE)) %>%
-  mutate(hour = hour(date)) %>%
+  mutate(date = with_tz(date, "America/Mexico_City")) %>%
+  mutate(hour = format(date, "%H:%M")) %>%
   mutate(year = year(date)) %>%
   mutate(month = month(date)) %>%
   mutate(date = format(date, "%Y-%m-%d")) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
   select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
   write_csv("clean-data/crime-lat-long-pgj.csv")
+
