@@ -4,3 +4,10 @@
 .Ruserdata
 clean-data/cuadrantes.csv
 clean-data/cuadrantes-hoyodecrimen.csv
+*.png
+*.csv
+*.csv.zip
+*.zip
+*.xlsx
+*.xls
+solicitudes/*

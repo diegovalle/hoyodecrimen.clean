@@ -60,28 +60,27 @@ ggplot(df, aes(count)) +
   geom_histogram(bins = 35)
 
 ctrl <- gam.control(nthreads = 4)
-m1 <- gam(count ~ s(id, bs = 'mrf', k = 200, xt = list(nb = nb)) + offset(log(SUMPOB1)), # define MRF smooth
+m1 <- gam(count ~ s(id, bs = 'mrf', k = 500, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
           data = df,
-          method = 'REML', # fast version of REML smoothness selection,
+          method = 'REML',
           family = tw
 ) 
-m2 <- gam(count ~ s(id, bs = 'mrf', k = 200, xt = list(nb = nb)) + offset(log(SUMPOB1)), # define MRF smooth
+m2 <- gam(count ~ s(id, bs = 'mrf', k = 300, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
           data = df,
-          method = 'REML', # fast version of REML smoothness selection,
-          family = ziP
+          method = 'REML', 
+          family = tw
 ) 
-summary(m1)
-summary(m2)
+#summary(m1)#01270
+#summary(m2)
 anova(m1, m2)
 plot(m1, select=3)
-#m1 <- m2
 
 df$resid.gam.mod <- residuals(m1, type = "pearson")
 df$fit.gam.mod <- residuals(m1, type = "pearson")
 plot(df$fit.gam.mod, df$resid.gam.mod)
 ggplot(data = df) + geom_point(aes(x = count, y = resid.gam.mod)) + 
-  facet_wrap(~municipio)
-ggplot(data = df) + geom_line(aes(x = count, y = resid.gam.mod, group = municipio)) 
+  facet_wrap(~Sector_hoy)
+ggplot(data = df) + geom_line(aes(x = count, y = resid.gam.mod, group = Sector_hoy)) 
 
 
 df$pred = predict(m1, type = 'response')
@@ -94,10 +93,10 @@ labels <- data.frame(
   name = c("Iztapalapa/Tlahuac", "Tepito", " San Felipe de Jesús", 
            "Cerro del Chiquihuite", "Olivar del Conde", "Ermita Zaragoza",
            "Central de Abastos"),
-  lat =c(19.301887, 19.445793, 19.490038, 
+  lat =c(19.301887, 19.445793, 19.496768, 
          19.542162, 19.374862, 19.367161,
          19.373099),
-  long = c(-99.069528, -99.128877, -99.076248, 
+  long = c(-99.069528, -99.128877, -99.075112, 
            -99.134397, -99.217309, -98.999505, 
            -99.091441),
   group = NA
@@ -111,7 +110,7 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
   geom_path(col = 'black', alpha = 0.5, size = 0.05) +
   coord_map() +
   geom_label_repel(data = labels, aes(long, lat, label = name), size = 3,
-                   force = .2, alpha = .8,
+                   force = .6, alpha = .8,
                    box.padding = 3.3, label.padding = 0.18) +
   scale_fill_viridis(name = "rate", 
                      #limits = c(0, 120),
@@ -139,7 +138,6 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
           subtitle = str_c("Because some cuadrantes have a low population and homicides tend to be rare occurrences\n",
                            "the variance in homicide rates per 100,000 tends to be high. To remove some of the variance,\n",
                            "and help discover patterns in the data, the homicide rate in each cuadrante was calculated\n",
-                           "based on a GAM with a Gaussian Markov random field smoother and a Tweedie \n",
-                           "response."))
-ggsave("cdmx-smooth-latest.png", dpi = 100, width = 10, height = 11)
+                           "based on a GAM with a Gaussian Markov random field smoother and a tweedie response."))
+ggsave("cdmx-smooth-latest.png", dpi = 100, width = 10, height = 13)
 
