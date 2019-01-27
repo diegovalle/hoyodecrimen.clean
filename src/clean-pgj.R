@@ -188,11 +188,13 @@ df %>%
                               format = "%Y-%m-%dT%H:%M:%S%z",
                               lt = FALSE)) %>%
   mutate(date = with_tz(date, "America/Mexico_City")) %>%
-  mutate(hour = format(date, "%H:%M")) %>%
+  mutate(hour = as.character(format(date, "%H:%M"))) %>%
   mutate(year = year(date)) %>%
   mutate(month = month(date)) %>%
-  mutate(date = format(date, "%Y-%m-%d")) %>%
+  mutate(date = as.character(format(date, "%Y-%m-%d"))) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
   select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
-  write_csv("clean-data/crime-lat-long-pgj.csv")
+  write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
 
+
+#View(unique(df[,c("Delito", "Categoría.de.delito")]))
