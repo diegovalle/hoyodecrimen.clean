@@ -20,6 +20,13 @@ library(maps)
 library(maptools)
 library(sp)
 library(tidyr)
+library(pointdensityP)
+library(ggmap)
+library('mgcv')
+library('viridis')
+library("spdep")
+library("ggrepel")
+
 options(stringsAsFactors = FALSE)
 
 #library(Rcompression)

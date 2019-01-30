@@ -1,7 +1,3 @@
-library('mgcv')
-library('viridis')
-library("spdep")
-library("ggrepel")
 
 
 hom_last_year <- read.csv("clean-data/crime-lat-long-pgj.csv", stringsAsFactors = FALSE) %>%
@@ -60,20 +56,20 @@ ggplot(df, aes(count)) +
   geom_histogram(bins = 35)
 
 ctrl <- gam.control(nthreads = 4)
-m1 <- gam(count ~ s(id, bs = 'mrf', k = 500, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
+m1 <- gam(count ~ s(id, bs = 'mrf', k = 840, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
           data = df,
           method = 'REML',
           family = tw
 ) 
-m2 <- gam(count ~ s(id, bs = 'mrf', k = 300, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
-          data = df,
-          method = 'REML', 
-          family = tw
-) 
-#summary(m1)#01270
+# m2 <- gam(count ~ s(id, bs = 'mrf', k = 300, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
+#           data = df,
+#           method = 'REML', 
+#           family = tw
+# ) 
+#summary(m1)
 #summary(m2)
-anova(m1, m2)
-plot(m1, select=3)
+#anova(m1, m2)
+#plot(m1, select=3)
 
 df$resid.gam.mod <- residuals(m1, type = "pearson")
 df$fit.gam.mod <- residuals(m1, type = "pearson")
@@ -90,15 +86,15 @@ df$rate <- df$count / df$SUMPOB1 * 10^5
 #df$pred_rate2[df$pred_rate > 120] <- 120 
 
 labels <- data.frame(
-  name = c("Iztapalapa/Tlahuac", "Tepito", " San Felipe de Jesús", 
-           "Cerro del Chiquihuite", "Olivar del Conde", "Ermita Zaragoza",
-           "Central de Abastos"),
-  lat =c(19.301887, 19.445793, 19.496768, 
-         19.542162, 19.374862, 19.367161,
-         19.373099),
-  long = c(-99.069528, -99.128877, -99.075112, 
-           -99.134397, -99.217309, -98.999505, 
-           -99.091441),
+  name = c("Valle de San Lorenzo", "Tepito", " San Felipe de Jesús", 
+           "Cerro del Chiquihuite", "Bellavista", "Ermita Zaragoza",
+           "Central de Abastos", "San Andrés Tomatlán", "Topilejo"),
+  lat =c(19.299767, 19.445793, 19.496768, 
+         19.542162, 19.397080, 19.367161,
+         19.373099, 19.327635, 19.199720),
+  long = c(-99.078852, -99.128877, -99.075112, 
+           -99.134397, -99.193402, -98.999505, 
+           -99.091441, -99.103074, -99.143017),
   group = NA
 )
 
@@ -138,6 +134,9 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
           subtitle = str_c("Because some cuadrantes have a low population and homicides tend to be rare occurrences\n",
                            "the variance in homicide rates per 100,000 tends to be high. To remove some of the variance,\n",
                            "and help discover patterns in the data, the homicide rate in each cuadrante was calculated\n",
-                           "based on a GAM with a Gaussian Markov random field smoother and a tweedie response."))
-ggsave("cdmx-smooth-latest.png", dpi = 100, width = 10, height = 13)
+                           "based on a GAM with a Gaussian Markov random field smoother and a tweedie response,\n",
+                           "with each sector included as a treatment variable"))
+ggsave("graphs/cdmx-smooth-latest.png", dpi = 100, width = 10, height = 13)
+
+
 
