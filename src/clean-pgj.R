@@ -1,7 +1,7 @@
 
 url <- "https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-cdmx/download/?format=csv&timezone=America/Mexico_City&use_labels_for_header=true"
 df <- read.csv(url, sep = ";")
-
+#df <- read.csv("/tmp/index.html?format=csv&timezone=America%2FMexico_City&use_labels_for_header=true", sep = ";")
 
 df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
@@ -60,7 +60,7 @@ df <- dplyr::rename(df, "cuadrante" = "Nomenclatu", "sector" = "Sector_hoy", "po
 df[is.na(df$cuadrante), "cuadrante"] <- "(NO ESPECIFICADO)"
 df[is.na(df$sector), "sector"] <- "NO ESPECIFICADO"
 
-a=df %>%
+df %>%
   #filter(Categoría.de.delito == "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA") %>%
   group_by(Delito, Categoría.de.delito ) %>%
   summarise(n = n())
@@ -146,13 +146,25 @@ df$crime <- iconv(df$crime, from="UTF-8", to="ASCII//TRANSLIT")
 
 df %>%
   filter(crime == "HOMICIDIO DOLOSO") %>%
-  group_by(Año, Categoría.de.delito) %>%
-  summarise(n = n())
+  group_by(Año, Mes, Categoría.de.delito) %>%
+  summarise(n = n()) %>%
+  arrange(-Año)
 
 df %>%
   group_by(crime) %>%
   summarise(n = n()) %>%
   arrange(n)
+
+## Correct errors in the data
+
+## df$Mes.y.año <- str_replace(df$Mes.y.año, "01/2019", "2019-01")
+expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
+expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
+
+df$Fecha.inicio <- str_replace(df$Fecha.inicio,
+                               "(\\d{2})/(\\d{2})/(\\d{4})( \\d{2}:\\d{2})", 
+                               "\\3-\\2-\\1\\4:00")
+expect_true(all(str_detect(df$Fecha.inicio, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}")))
 
 ### File for the database
 
@@ -172,6 +184,7 @@ cuadrantes <-  left_join(cuadrantes,
 cuadrantes <-   cuadrantes %>%
   mutate(date = str_c(date, "-01")) %>%
   mutate(year = str_sub(date, 1, 4)) %>%
+  filter(year >= 2016) %>%
   arrange(cuadrante, crime, date)
 cuadrantes$count[is.na(cuadrantes$count)] <- 0
 cuadrantes$sector[is.na(cuadrantes$sector)] <- "NO ESPECIFICADO"
@@ -184,10 +197,10 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"), row.names =
 
 
 df %>%
-  mutate(date = fast_strptime(str_replace(df$Fecha.inicio, "0([5|6]):00$", "0\\100"), 
-                              format = "%Y-%m-%dT%H:%M:%S%z",
+  mutate(date = fast_strptime(df$Fecha.inicio, 
+                              format = "%Y-%m-%d %H:%M:%S",
                               lt = FALSE)) %>%
-  mutate(date = with_tz(date, "America/Mexico_City")) %>%
+  mutate(date = force_tz(date, "America/Mexico_City")) %>%
   mutate(hour = as.character(format(date, "%H:%M"))) %>%
   mutate(year = year(date)) %>%
   mutate(month = month(date)) %>%
@@ -196,5 +209,12 @@ df %>%
   select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
 
-
+## Sometimes there are probles with the timezone in the data
+## check that most homicides occur at ~midnight
+df %>%
+  mutate(hour = as.numeric(str_sub(Fecha.inicio, 11, 13))) %>%
+  filter(crime == "HOMICIDIO DOLOSO") %>%
+  group_by(hour) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(hour, n)) + geom_histogram(bins = 1, stat = "identity")
 #View(unique(df[,c("Delito", "Categoría.de.delito")]))
