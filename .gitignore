@@ -9,5 +9,6 @@ clean-data/cuadrantes-hoyodecrimen.csv
 *.csv.zip
 *.zip
 *.xlsx
+*.RData
 *.xls
 solicitudes/*
