@@ -36,7 +36,7 @@ ctrl <- gam.control(nthreads = 4)
 m1 <- gam(count ~ s(id, bs = 'mrf', k = 710, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
           data = df,
           method = 'REML',
-          family = tw
+          family = ziP
 ) 
 # m2 <- gam(count ~ s(id, bs = 'mrf', k = 300, xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
 #           data = df,
@@ -58,11 +58,15 @@ ggplot(data = df) + geom_point(aes(x = count, y = resid.gam.mod)) +
 ggplot(data = df) + geom_line(aes(x = count, y = resid.gam.mod, group = Sector_hoy)) 
 
 
-df$pred = predict(m1, type = 'response')
-df$pred_rate = df$pred  / df$SUMPOB1 * 10^5
+df.new <- df
+#  pop column identically equal to 1, so to have log(populaton)=0,
+# but we need rates per 100K
+df.new$SUMPOB1 <- 100000
+df$pred = predict(m1, newdata = df.new, type = "response") 
+# rate from the model
+df$pred_rate = df$pred # / df$SUMPOB1 * 10^5
+# raw rate
 df$rate <- df$count / df$SUMPOB1 * 10^5
-#df$pred_rate2 <- df$pred_rate
-#df$pred_rate2[df$pred_rate > 120] <- 120 
 
 labels <- data.frame(
   name = c("Valle de San Lorenzo", "Tepito", " San Felipe de Jesús", 
@@ -116,7 +120,7 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
           subtitle = str_c("Because some cuadrantes have a low population and homicides tend to be rare occurrences\n",
                            "the variance in homicide rates per 100,000 tends to be high. To remove some of the variance,\n",
                            "and help discover patterns in the data, the homicide rate in each cuadrante was calculated\n",
-                           "based on a GAM with a Gaussian Markov random field smoother and a tweedie response,\n",
+                           "based on a GAM with a Gaussian Markov random field smoother and a zero-inflated Poisson response,\n",
                            "with each sector included as a treatment variable"))
 ggsave("graphs/cdmx-smooth-latest.png", dpi = 100, width = 10, height = 13)
 
