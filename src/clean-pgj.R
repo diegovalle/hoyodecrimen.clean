@@ -229,6 +229,7 @@ cuadrantes %>%
     geom_line() +
     xlab("year") +
     ylab("number of crimes") +
+    expand_limits(y = 0) +
     labs(title = "Crimes in Mexico City") +
     facet_wrap(~ crime, scale = "free_y")
-ggsave("graphs/crimes.png", dpi = 100, width = 12, height = 7)
+ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)

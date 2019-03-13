@@ -47,7 +47,7 @@ m1 <- gam(count ~ s(id, bs = 'mrf', k = 710, xt = list(nb = nb)) + offset(log(SU
 #summary(m2)
 #anova(m1, m2)
 #plot(m1, select=3)
-#save(m1, file = "clean-data/m1.RData")
+save(m1, file = "clean-data/m1.RData")
 #load("clean-data/m1.RData")
 
 # df$resid.gam.mod <- residuals(m1, type = "pearson")
@@ -95,7 +95,6 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
                    force = .8, alpha = .8,
                    box.padding = 3.3, label.padding = 0.18) +
   scale_fill_viridis(name = "rate", 
-                     #limits = c(0, 120),
                      guide = guide_colorbar(direction = "horizontal",
                                             barheight = unit(2, units = "mm"),
                                             barwidth = unit(75, units = "mm"),
@@ -116,7 +115,10 @@ ggplot(mdata, aes(x = long, y = lat, group = group)) +
         panel.grid.minor=element_blank(),
         #panel.spacing=unit(0, "lines"),
         plot.background=element_blank())+
-  ggtitle(str_c("Modeled Homicide Rates in Mexico City (Feb 2018 - Jan 2018)"),
+  ggtitle(str_c("Modeled Homicide Rates in Mexico City (", 
+                format(as.Date(start_date), "%b %Y"), 
+                " - ", 
+                format(as.Date(end_points) %m-% months(1), "%b %Y"), ")"),
           subtitle = str_c("Because some cuadrantes have a low population and homicides tend to be rare occurrences\n",
                            "the variance in homicide rates per 100,000 tends to be high. To remove some of the variance,\n",
                            "and help discover patterns in the data, the homicide rate in each cuadrante was calculated\n",
