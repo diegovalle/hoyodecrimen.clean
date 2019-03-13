@@ -19,13 +19,13 @@ ggsave("graphs/hommap.png", dpi = 100, width = 7, height = 8)
 
 
 points <- read.csv("clean-data/crime-lat-long-pgj.csv", stringsAsFactors = FALSE) %>%
-  filter(date >=  "2016-02-01" & date < "2019-02-01") %>%
+  filter(date >=  start_points & date < end_points) %>%
   filter(crime == "HOMICIDIO DOLOSO") %>%
   na.omit()
 SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
                            date_col = "date", grid_size = 0.1, radius = 1)
 SD_density$date <- as_date(SD_density$dateavg, origin = lubridate::origin)
-breaks = c(as.numeric(as.Date(c("2016-08-01", "2017-08-01", "2018-08-01"))))
+breaks = c(as.numeric(as.Date(c("2017-02-01", "2018-02-01", "2019-02-01"))))
 qmplot(lon, lat, data = SD_density, geom = "blank",  
        zoom = 11, maptype = "terrain", darken = .5, legend = "topleft") +
   geom_point(aes(x = lon, y = lat, colour = dateavg), shape = 19, size = 2,
@@ -34,6 +34,8 @@ qmplot(lon, lat, data = SD_density, geom = "blank",
                         palette = "RdBu",
                         breaks = breaks,
                         labels = c(format(as.Date(breaks), "%b %Y"))) +
-  labs(title = "Density count of homicides and average date of each point within a radius of 1km\n (Feb 2016 - Jan 2019)") +
+  labs(title = paste("Density count of homicides and average date of each point within a radius of 1km\n (",
+                     format(as.Date(start_points), "%b %Y") ," - ",
+                     format(as.Date(end_points) %m-% months(1), "%b %Y") , ")")) +
   coord_map()
 ggsave("graphs/hommapdate.png", dpi = 100, width = 7, height = 8)

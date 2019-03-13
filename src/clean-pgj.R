@@ -157,14 +157,16 @@ df %>%
 
 ## Correct errors in the data
 
-## df$Mes.y.año <- str_replace(df$Mes.y.año, "01/2019", "2019-01")
+df$Mes.y.año <- str_replace(df$Mes.y.año, "01/2019", "2019-01")
+df$Mes.y.año <- str_replace(df$Mes.y.año, "feb-19", "2019-02")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
-expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
 
 df$Fecha.inicio <- str_replace(df$Fecha.inicio,
                                "(\\d{2})/(\\d{2})/(\\d{4})( \\d{2}:\\d{2})", 
                                "\\3-\\2-\\1\\4:00")
-expect_true(all(str_detect(df$Fecha.inicio, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}")))
+
+expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
+expect_true(all(str_detect(df$Fecha.inicio, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")))
 
 ### File for the database
 
@@ -218,3 +220,15 @@ df %>%
   summarise(n = n()) %>%
   ggplot(aes(hour, n)) + geom_histogram(bins = 1, stat = "identity")
 #View(unique(df[,c("Delito", "Categoría.de.delito")]))
+
+
+cuadrantes %>%
+  group_by(date, crime) %>%
+  summarise(n = sum(count)) %>%
+  ggplot(aes(as.Date(date), n)) +
+    geom_line() +
+    xlab("year") +
+    ylab("number of crimes") +
+    labs(title = "Crimes in Mexico City") +
+    facet_wrap(~ crime, scale = "free_y")
+ggsave("graphs/crimes.png", dpi = 100, width = 12, height = 7)

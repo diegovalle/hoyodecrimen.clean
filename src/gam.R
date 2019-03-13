@@ -50,12 +50,12 @@ m1 <- gam(count ~ s(id, bs = 'mrf', k = 710, xt = list(nb = nb)) + offset(log(SU
 #save(m1, file = "clean-data/m1.RData")
 #load("clean-data/m1.RData")
 
-df$resid.gam.mod <- residuals(m1, type = "pearson")
-df$fit.gam.mod <- residuals(m1, type = "pearson")
-plot(df$fit.gam.mod, df$resid.gam.mod)
-ggplot(data = df) + geom_point(aes(x = count, y = resid.gam.mod)) + 
-  facet_wrap(~Sector_hoy)
-ggplot(data = df) + geom_line(aes(x = count, y = resid.gam.mod, group = Sector_hoy)) 
+# df$resid.gam.mod <- residuals(m1, type = "pearson")
+# df$fit.gam.mod <- residuals(m1, type = "pearson")
+# plot(df$fit.gam.mod, df$resid.gam.mod)
+# ggplot(data = df) + geom_point(aes(x = count, y = resid.gam.mod)) + 
+#   facet_wrap(~Sector_hoy)
+# ggplot(data = df) + geom_line(aes(x = count, y = resid.gam.mod, group = Sector_hoy)) 
 
 
 df.new <- df
