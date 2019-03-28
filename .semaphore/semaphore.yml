@@ -11,22 +11,24 @@ blocks:
         - name: APP_ENV
           value: prod
         - name: RVERSION
-          value: 3.5
+          value: devel
       jobs:
       - name: Clean data
         commands:
-          - curl -OL https://raw.githubusercontent.com/gaborcsardi/r-builder/master/pkg-build.sh
-          - chmod 755 pkg-build.sh
-          - ./pkg-build.sh bootstrap
-          - ./pkg-build.sh install_deps
-          - ./pkg-build.sh run_tests
+          #- curl -OL https://raw.githubusercontent.com/gaborcsardi/r-builder/master/pkg-build.sh
+          #- chmod 755 pkg-build.sh
+          #- ./pkg-build.sh bootstrap
+          #- ./pkg-build.sh install_deps
+          #- ./pkg-build.sh run_tests
           - checkout
-          - cd hoyodecrimen.clean && Rscript run-all.R
+          #- cd hoyodecrimen.clean && Rscript run-all.R
           - echo "done"
-  - name: "Push Image"
+  - name: "Docker Image"
     task:
       jobs:
-      - name: Push
+      - name: Build with docker
         commands:
           - checkout
           - docker pull rocker/geospatial
+          - docker images
+          - docker run --entrypoint /bin/sh -v hoyodecrimen.clean:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
