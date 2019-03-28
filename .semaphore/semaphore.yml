@@ -11,7 +11,7 @@ blocks:
         - name: APP_ENV
           value: prod
         - name: RVERSION
-          value: 3.5.3
+          value: 3.5.2
       jobs:
       - name: Clean data
         commands:
