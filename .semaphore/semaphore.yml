@@ -34,4 +34,4 @@ blocks:
           - docker images
           - ls
           - pwd
-          - docker run --entrypoint /bin/sh -v .:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
+          - docker run --entrypoint /bin/sh -v "/home/semaphore/hoyodecrimen.clean":/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
