@@ -11,7 +11,7 @@ blocks:
         - name: APP_ENV
           value: prod
         - name: RVERSION
-          value: 3.5.2
+          value: 3.5
       jobs:
       - name: Clean data
         commands:
@@ -21,7 +21,7 @@ blocks:
           - ./pkg-build.sh install_deps
           - ./pkg-build.sh run_tests
           - checkout
-          - Rscript run-all.R
+          - cd hoyodecrimen.clean && Rscript run-all.R
           - echo "done"
   - name: "Push Image"
     task:
@@ -29,4 +29,4 @@ blocks:
       - name: Push
         commands:
           - checkout
-          - echo "make docker.push"
+          - docker pull rocker/geospatial
