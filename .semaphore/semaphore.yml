@@ -13,40 +13,15 @@ blocks:
       jobs:
       - name: Docker build
         commands:
+          - RVERSION=3.5.3
+          - curl -OL https://raw.githubusercontent.com/gaborcsardi/r-builder/master/pkg-build.sh
+          - chmod 755 pkg-build.sh
+          - ./pkg-build.sh bootstrap
+          - ./pkg-build.sh install_deps
+          - ./pkg-build.sh run_tests
           - checkout
-          - ls -1
-          - echo $APP_ENV
-          - echo "Docker build..."
+          - Rscript run-all.R
           - echo "done"
-  - name: "Smoke tests"
-    task:
-      jobs:
-      - name: Smoke
-        commands:
-          - checkout
-          - echo "make smoke"
-  - name: "Unit tests"
-    task:
-      jobs:
-      - name: RSpec
-        commands:
-          - checkout
-          - echo "make rspec"
-      - name: Lint code
-        commands:
-          - checkout
-          - echo "make lint"
-      - name: Check security
-        commands:
-          - checkout
-          - echo "make security"
-  - name: "Integration tests"
-    task:
-      jobs:
-      - name: Cucumber
-        commands:
-          - checkout
-          - echo "make cucumber"
   - name: "Push Image"
     task:
       jobs:
