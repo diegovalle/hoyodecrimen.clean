@@ -1,4 +1,4 @@
-
+print("Cleaning SESNSP data from elcri.men")
 
 tmp_pgj <-  tempfile("cuads", fileext = ".csv.gz")
 download.file ("https://elcri.men/data/nm-fuero-comun-estados.csv.gz",

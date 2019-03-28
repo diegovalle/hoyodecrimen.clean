@@ -1,3 +1,4 @@
+print("Point density maps")
 
 # Point density of homicides during the last year
 

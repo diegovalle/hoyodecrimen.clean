@@ -1,3 +1,4 @@
+print("GAM model of homicide rates in CDMX")
 
 hom_last_year <- read.csv("clean-data/crime-lat-long-pgj.csv") 
 
@@ -55,13 +56,22 @@ ggplot(df, aes(count)) +
 
 ctrl <- gam.control(nthreads = 4)
 df$id <- as.factor(df$id)
+
+
+if (detectCores() > 1) { 
+  ctrl <- list(nthreads = detectCores())
+  ## could also use makeForkCluster, but read warnings first!
+} else ctrl <- NULL
+
+
 m1 <- gam(count ~ s(id,
                     bs = "mrf",
                     k = 710,
                     xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
           data = df,
           method = "REML",
-          family = ziP
+          family = ziP,
+          control = ctrl
 )
 # m2 <- gam(count ~ s(id, 
 #bs = 'mrf', 
