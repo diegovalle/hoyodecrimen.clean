@@ -32,4 +32,4 @@ blocks:
           - checkout
           - docker pull rocker/geospatial
           - docker images
-          - docker run --entrypoint /bin/sh -v $SEMAPHORE_GIT_DIR/hoyodecrimen.clean:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
+          - docker run --entrypoint /bin/sh -v $SEMAPHORE_GIT_DIR:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
