@@ -1,33 +1,17 @@
-library(gdata)
-library(zoo)
-library(testthat)
-library(readr)
-#library(reshape2)
-library(maptools)
-library(ggplot2)
-library(rgdal)
-library(lubridate)
-library(stringr)
-library(foreign)
-#library(reshape)
-library(jsonlite)
-library(xtable)
-library(dplyr)
-library(readxl)
-library(tidyr)
-library(rgeos)
-library(maps)
-library(maptools)
-library(sp)
-library(tidyr)
-library(pointdensityP)
-library(ggmap)
-library('mgcv')
-library('viridis')
-library("spdep")
-library("ggrepel")
+## Auto-Install packages
+.packs <- c("gdata", "zoo", "testthat", "readr", "maptools",
+            "ggplot2", "rgdal", "lubridate", "stringr",
+            "foreign", "jsonlite", "xtable", "dplyr", "tidyr",
+            "rgeos", "maps", "sp", "tidyr", "pointdensityP",
+            "ggmap", "mgcv", "viridis", "spdep", "ggrepel",
+            "tufte")
+.success <- suppressPackageStartupMessages(
+  suppressWarnings(sapply(.packs, require, character.only = TRUE))
+)
+if (length(names(.success)[!.success])) {
+  install.packages(names(.success)[!.success])
+  sapply(names(.success)[!.success], require, character.only = TRUE)
+}
 
 options(stringsAsFactors = FALSE)
-
-#library(Rcompression)
 theme_set(theme_bw())
