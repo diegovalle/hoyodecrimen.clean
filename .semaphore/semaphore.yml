@@ -21,6 +21,7 @@ blocks:
           #- ./pkg-build.sh install_deps
           #- ./pkg-build.sh run_tests
           - checkout
+          - ls
           #- cd hoyodecrimen.clean && Rscript run-all.R
           - echo "done"
   - name: "Docker Image"
@@ -31,4 +32,4 @@ blocks:
           - checkout
           - docker pull rocker/geospatial
           - docker images
-          - docker run --entrypoint /bin/sh -v hoyodecrimen.clean:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
+          - docker run --entrypoint /bin/sh -v $SEMAPHORE_GIT_DIR/hoyodecrimen.clean:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
