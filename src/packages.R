@@ -4,7 +4,7 @@
             "foreign", "jsonlite", "xtable", "dplyr", "tidyr",
             "rgeos", "maps", "sp", "tidyr", "pointdensityP",
             "ggmap", "mgcv", "viridis", "spdep", "ggrepel",
-            "tufte", "parallel")
+            "tufte", "parallel", "mapproj")
 .success <- suppressPackageStartupMessages(
   suppressWarnings(sapply(.packs, require, character.only = TRUE))
 )

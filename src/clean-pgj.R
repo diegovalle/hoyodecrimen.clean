@@ -1,4 +1,4 @@
-print("cleaning PGJ-CDMX data")
+print("Cleaning PGJ-CDMX data")
 
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
              "carpetas-de-investigacion-pgj-cdmx/download/",
