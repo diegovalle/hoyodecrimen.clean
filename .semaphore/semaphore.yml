@@ -33,6 +33,5 @@ blocks:
           - docker pull rocker/geospatial
           - docker images
           - ls
-          - ls -la $SEMAPHORE_GIT_DIR
           - pwd
           - docker run --entrypoint /bin/sh -v .:/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R" 
