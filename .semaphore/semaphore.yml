@@ -26,4 +26,4 @@ blocks:
             - docker run --entrypoint /bin/sh -v "/home/semaphore/hoyodecrimen.clean":/hoyodecrimen rocker/geospatial -c "cd /hoyodecrimen && Rscript run-all.R"
       epilogue:
         commands:
-          - if [ "$SEMAPHORE_JOB_RESULT" = "passed" ]; then zip hoyodecrimen$(date +%F).zip clean-data/* graphs/* && ./upload_to_b2 hoyodecrimen$(date +%F).zip; fi
+          - if [ "$SEMAPHORE_JOB_RESULT" = "passed" ]; then zip hoyodecrimen$(date +%F).zip clean-data/* graphs/* && ./upload_to_b2.sh hoyodecrimen$(date +%F).zip; fi
