@@ -2,74 +2,60 @@ print("Point density maps")
 
 # Point density of homicides during the last year
 
-points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
-  filter(date <= max(date) & 
-           date > ceiling_date(
-             floor_date(ymd(max(date)), "month") - years(1), 
-             "month")
-             ) %>%
-  filter(crime == "HOMICIDIO DOLOSO") %>%
-  na.omit()
-SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
-                           date_col = "date", grid_size = 0.1, radius = 1)
+density_last_year <- function(crime){
+  points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
+    filter(date <= max(date) & 
+             date > ceiling_date(
+               floor_date(ymd(max(date)), "month") - years(1), 
+               "month")
+    ) %>%
+    filter(crime == !!crime) %>%
+    na.omit()
+  SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
+                             date_col = "date", grid_size = 0.1, radius = 1)
+  return(list("density" = SD_density, "start" = min(points$date),
+              "end" = max(points$date)))
+}
 
+density_chart <- function(crime, ll) {
+  density_title <- str_c("Point density of ",
+                         crime,
+                         " counts in CDMX with a 1 km",
+                         " radius (",
+                         format(as.Date(ll[["start"]]), "%b %Y"),
+                         " - ",
+                         format(as.Date(ll[["end"]]), "%b %Y"),
+                         ")")
+  qmplot(lon, lat, data = ll[["density"]], geom = "blank",
+         zoom = 11, maptype = "terrain", darken = .4, legend = "topleft") +
+    geom_point(aes(x = lon, y = lat, colour = count), shape = 19, size = 2,
+               data = ll[["density"]]) +
+    scale_color_viridis(option = "inferno") +
+    labs(title = density_title) 
+}
 
-density_title <- str_c("Point density of homicide counts in CDMX with a 1 km",
-                       " radius (",
-                       format(as.Date(min(points$date)), "%b %Y"),
-                       " - ",
-                       format(as.Date(max(points$date)), "%b %Y"),
-                       ")")
-qmplot(lon, lat, data = SD_density, geom = "blank",
-       zoom = 11, maptype = "terrain", darken = .4, legend = "topleft") +
-  geom_point(aes(x = lon, y = lat, colour = count), shape = 19, size = 2,
-             data = SD_density) +
-  scale_color_viridis(option = "inferno") +
-  labs(title = density_title) 
-ggsave("graphs/hommap.png", dpi = 100, width = 7, height = 8)
+ll <- density_last_year("HOMICIDIO DOLOSO")
+p <- density_chart("homicide", ll)
+ggsave("graphs/density_homicides.png", 
+       plot = p, dpi = 100, width = 7, height = 8)
 
+ll <- density_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.")
+p <- density_chart("car robbery w/v", ll)
+ggsave("graphs/density_car_robbery_wv.png", 
+       plot = p, dpi = 100, width = 7, height = 8)
 
-# Density of changes in homicide rates (where have homicides decreased and 
-# increased)
+ll <- density_last_year("ROBO DE VEHICULO AUTOMOTOR S.V.")
+p <- density_chart("car robbery wo/v", ll)
+ggsave("graphs/density_car_robbery_wov.png", 
+       plot = p, dpi = 100, width = 7, height = 8)
 
-points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
-  filter(date <= max(date) & 
-           date > ceiling_date(
-             floor_date(ymd(max(date)), "month") - years(3), 
-             "month")
-  ) %>%
-  filter(crime == "HOMICIDIO DOLOSO") %>%
-  na.omit()
-SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
-                           date_col = "date", grid_size = 0.1, radius = 1)
-SD_density$date <- as_date(SD_density$dateavg, origin = lubridate::origin)
+ll <- density_last_year("ROBO A TRANSEUNTE C.V.")
+p <- density_chart("street robbery", ll)
+ggsave("graphs/density_street_robbery.png", 
+       plot = p, dpi = 100, width = 7, height = 8)
 
-int <- interval(min(SD_density$date), max(SD_density$date), 
-                tz = "America/Mexico_City")
-breaks  <-  c(
-  as.numeric(
-    as.Date(
-      c(int$start + as.duration(int) / 3,
-        int$start + 2 * as.duration(int) / 3,
-        int$start + as.duration(int) - days(1)
-      )
-    )
-  )
-)
+ll <- density_last_year("LESIONES POR ARMA DE FUEGO")
+p <- density_chart("firearm lesions", ll)
+ggsave("graphs/density_firearm.png", 
+       plot = p, dpi = 100, width = 7, height = 8)
 
-
-qmplot(lon, lat, data = SD_density, geom = "blank",
-       zoom = 11, maptype = "terrain", darken = .5, legend = "topleft") +
-  geom_point(aes(x = lon, y = lat, colour = dateavg), shape = 19, size = 2,
-             data = SD_density) +
-  scale_color_distiller("average\ndate",
-                        palette = "RdBu",
-                        breaks = breaks,
-                        labels = c(format(as.Date(breaks), "%b %Y"))) +
-  labs(title = paste0("Average date of point density counts of homicides",
-                     " with a radius of 1km\n(",
-                     format(as.Date(min(points$date)) + days(1), "%b %Y"),
-                     " - ",
-                     format(as.Date(max(points$date)), "%b %Y"),
-                     ")")) 
-ggsave("graphs/hommapdate.png", dpi = 100, width = 7, height = 8)

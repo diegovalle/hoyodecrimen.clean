@@ -12,3 +12,4 @@ clean-data/cuadrantes-hoyodecrimen.csv
 *.RData
 *.xls
 solicitudes/*
+secrets-b2.yml
