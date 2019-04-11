@@ -1,6 +1,12 @@
 #!/bin/bash
 set -euo
 
+# Upload a file to b2
+# Expects the following environmental variables to exist:
+#     ACCOUNT_ID
+#     APPLICATION_KEY
+#     BUCKET_ID
+
 AUTH_REL=$(curl --retry 5 -s https://api.backblazeb2.com/b2api/v2/b2_authorize_account -u "$ACCOUNT_ID:$APPLICATION_KEY")
 
 ACCOUNT_AUTHORIZATION_TOKEN=$( echo "$AUTH_REL" | grep -Po '(?<="authorizationToken": ")[^"]*')
@@ -11,7 +17,7 @@ UPLOAD_REL=$(curl --retry 5 -s \
     -H 'Authorization: '"$ACCOUNT_AUTHORIZATION_TOKEN"'' \
     -d '{"bucketId": "'"$BUCKET_ID"'"}' \
     "$API_URL"/b2api/v2/b2_get_upload_url)
-    
+
 
 UPLOAD_AUTHORIZATION_TOKEN=$( echo "$UPLOAD_REL" | grep -Po '(?<="authorizationToken": ")[^"]*' )
 UPLOAD_URL=$( echo "$UPLOAD_REL" | grep -Po '(?<="uploadUrl": ")[^"]*' )

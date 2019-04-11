@@ -203,7 +203,7 @@ crime_gam_chart <- function(cuad_map, df, start_date, end_date) {
 
 print("GAM")
 
-k <- 210
+k <- 710
 cuad_map <- read_cdmx_map()
 
 ll <- gam_crime_last_year("HOMICIDIO DOLOSO", cuad_map, k = k)
