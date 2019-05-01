@@ -24,11 +24,12 @@ gam_model <- function(df, nb, k, crime) {
   ctrl <- gam.control(nthreads = detectCores())
   
   # Use only one thread when not running on CI
+  df$Sector_hoy <- as.factor(df$Sector_hoy)
   if (Sys.getenv("CI") == "") {
     m1 <- gam(count ~ s(id,
                         bs = "mrf",
                         k = k,
-                        xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
+                        xt = list(nb = nb)) + s(Sector_hoy, bs = "re") + offset(log(SUMPOB1)),
               data = df,
               method = "REML",
               family = ziP
@@ -37,7 +38,7 @@ gam_model <- function(df, nb, k, crime) {
     m1 <- gam(count ~ s(id,
                         bs = "mrf",
                         k = k,
-                        xt = list(nb = nb)) + offset(log(SUMPOB1)) + Sector_hoy,
+                        xt = list(nb = nb)) + s(Sector_hoy, bs = "re") + offset(log(SUMPOB1)),
               data = df,
               method = "REML",
               family = ziP(link = "log"),
@@ -193,15 +194,13 @@ crime_gam_chart <- function(cuad_map, df, start_date, end_date) {
                               " to be high. To remove some of the variance,\n",
                               "and help discover patterns in the data, the",
                               " crime rate in each cuadrante was calculated\n",
-                              "based on a GAM with a Gaussian Markov random",
+                              "based on a hierarchical GAM with a Gaussian Markov random",
                               " field smoother and a zero-inflated Poisson",
-                              " response,\n",
+                              " \nresponse,",
                               "with each sector included as a treatment variable"))
   
   return(p)
 }
-
-print("GAM")
 
 k <- 710
 cuad_map <- read_cdmx_map()
