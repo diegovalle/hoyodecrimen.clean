@@ -197,8 +197,8 @@ df %>%
 
 ## Correct errors in the data
 
-df$Mes.y.año <- str_replace(df$Mes.y.año, "01/2019", "2019-01")
 df$Mes.y.año <- str_replace(df$Mes.y.año, "feb-19", "2019-02")
+df$Mes.y.año <- str_replace(df$Mes.y.año, "(\\d{2})/(\\d{4})", "\\2-\\1")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 
 df$Fecha.inicio <- str_replace(df$Fecha.inicio,
@@ -267,7 +267,7 @@ df %>%
   ggplot(aes(hour, n)) +
   geom_col() +
   ggtitle("Most homicides should occur at midnight")
-ggsave(filename = "graphs/check.png", width =7, height = 5, dpi = 100)
+ggsave(filename = "graphs/check.png", width = 7, height = 5, dpi = 100)
 
 cuadrantes %>%
   group_by(date, crime) %>%

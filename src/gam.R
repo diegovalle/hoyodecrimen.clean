@@ -110,7 +110,8 @@ gam_crime_last_year <- function(crime = "HOMICIDIO DOLOSO", cuad_map, k,
   df$Nomenclatu <- factor(df$Nomenclatu)
   df$SUMPOB1 <- as.integer(df$SUMPOB1)
   # No cuadrantes with zero population, (besides it doensn't happen IRL)
-  df$SUMPOB1[df$SUMPOB1 == 0 ] <- 100
+  df$SUMPOB1[df$SUMPOB1 < 100 ] <- 100
+  df$SUMPOB1[is.na(df$SUMPOB1)] <- 100
   
   # Zero inflated?
   ggplot(df, aes(count)) +
