@@ -1,7 +1,7 @@
 print("Cleaning SESNSP data from elcri.men")
 
 tmp_pgj <-  tempfile("cuads", fileext = ".csv.gz")
-download.file ("https://elcri.men/data/nm-fuero-comun-estados.csv.gz",
+download.file("https://data.diegovalle.net/elcrimen/nm-fuero-comun-estados.csv.gz",
                tmp_pgj)
 pgj <- read.csv(tmp_pgj, stringsAsFactors = FALSE)
 pgj <- pgj %>%
