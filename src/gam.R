@@ -74,7 +74,7 @@ get_dates <- function() {
   
   # be careful about dates like 2016-02-29 which return NULL
   # when a year is substracted from them
-  end_date <- max(ymd(df$date))
+  end_date <- max(ymd(df$date), na.rm = TRUE)
   start_date <- floor_date(end_date, "month") - years(1)
   start_date <- ceiling_date(start_date, "month")
   return(list("hom" = df, "start" = start_date, "end" = end_date))
