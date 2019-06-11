@@ -6,6 +6,14 @@ url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
              "Mexico_City&use_labels_for_header=true")
 df <- read.csv(url, sep = ";")
 
+# rename columns to standarize names
+df <- df %>% rename(Latitud = latitud,
+              Longitud = longitud,
+              Categoría.de.delito = categoria_delito,
+              Año = año_hechos,
+              Mes = mes_hechos,
+              Delito = delito)
+
 df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
 df$Longitud <- as.numeric(df$Longitud)
@@ -197,17 +205,46 @@ df %>%
 
 ## Correct errors in the data
 
-df$Mes.y.año <- str_replace(df$Mes.y.año, "feb-19", "2019-02")
-df$Mes.y.año <- str_replace(df$Mes.y.año, "(\\d{2})/(\\d{4})", "\\2-\\1")
+df <- df[!is.na(df$fecha_hechos), ]
+df <- filter(df, Año >= 2016)
+
+
+# add leadin zero to hours
+df$fecha_hechos2 <- str_replace(df$fecha_hechos,
+                                "(\\d{2}/\\d{2}/\\d{2} )(\\d{1})(:\\d{2})",
+                                "\\10\\2\\3")
+# convert to %Y-%m-%d %H:%M:%S format
+df$fecha_hechos2 <- str_replace(df$fecha_hechos2,
+                               "(\\d{2})/(\\d{2})/(\\d{2})( \\d{2}:\\d{2})",
+                               "20\\3-\\2-\\1\\4:00")
+expect_true(all(str_detect(df$fecha_hechos2,
+                           "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
+expect_true(max(df$fecha_hechos2) < Sys.Date())
+
+expect_true(all(df$Año), year(df$fecha_hechos2))
+expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
+             str_replace_all(df$Mes,
+                             c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
+                               "Abril" = "Apr", "Mayo" = "May", "Junio" = "Jun",
+                               "Julio" = "Jul", "Agosto" = "Aug", "Septiembre" = "Sep",
+                               "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
+)
+df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
+
+## head(df[which(str_detect(df$fecha_hechos2,
+##                 "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}") != TRUE),])
+
+#df$Mes.y.año <- str_replace(df$Mes.y.año, "feb-19", "2019-02")
+#df$Mes.y.año <- str_replace(df$Mes.y.año, "(\\d{2})/(\\d{4})", "\\2-\\1")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 
-df$Fecha.inicio <- str_replace(df$Fecha.inicio,
-                               "(\\d{2})/(\\d{2})/(\\d{4})( \\d{2}:\\d{2})",
-                               "\\3-\\2-\\1\\4:00")
+#df$Fecha.inicio <- str_replace(df$Fecha.inicio,
+#                               "(\\d{2})/(\\d{2})/(\\d{4})( \\d{2}:\\d{2})",
+#                               "\\3-\\2-\\1\\4:00")
 
-expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
-expect_true(all(str_detect(df$Fecha.inicio,
-                           "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")))
+#expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
+#expect_true(all(str_detect(df$Fecha.inicio,
+#                           "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")))
 
 ### File for the database
 
@@ -245,7 +282,7 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
 
 
 df %>%
-  mutate(date = fast_strptime(df$Fecha.inicio,
+  mutate(date = fast_strptime(df$fecha_hechos2,
                               format = "%Y-%m-%d %H:%M:%S",
                               lt = FALSE)) %>%
   mutate(date = force_tz(date, "America/Mexico_City")) %>%
@@ -260,7 +297,7 @@ df %>%
 ## Sometimes there are probles with the timezone in the data
 ## check that most homicides occur at ~midnight
 df %>%
-  mutate(hour = as.numeric(str_sub(Fecha.inicio, 11, 13))) %>%
+  mutate(hour = as.numeric(str_sub(fecha_hechos2, 11, 13))) %>%
   filter(crime == "HOMICIDIO DOLOSO") %>%
   group_by(hour) %>%
   summarise(n = n()) %>%
