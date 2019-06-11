@@ -4,9 +4,9 @@ print("point density and dates")
 
 density_points_date <- function(crime) {
   points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
-    filter(date <= max(date) & 
+    filter(date <= max(date, na.rm = TRUE) & 
              date > ceiling_date(
-               floor_date(ymd(max(date)), "month") - years(3), 
+               floor_date(ymd(max(date, na.rm = TRUE)), "month") - years(3), 
                "month")
     ) %>%
     filter(crime == !!crime) %>%
@@ -15,11 +15,11 @@ density_points_date <- function(crime) {
                              date_col = "date", grid_size = 0.5, radius = 1)
   SD_density$date <- as_date(SD_density$dateavg, origin = lubridate::origin)
   return(list("density" = SD_density, "start" = min(points$date),
-              "end" = max(points$date)))
+              "end" = max(points$date, na.rm = TRUE)))
 }
 
 get_breaks <- function(ll) {
-  int <- interval(min(ll[["density"]]$date), max(ll[["density"]]$date), 
+  int <- interval(min(ll[["density"]]$date), max(ll[["density"]]$date, na.rm = TRUE), 
                   tz = "America/Mexico_City")
   breaks  <-  c(
     as.numeric(

@@ -231,6 +231,8 @@ expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
 )
 df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 
+## df <- df[!is.na(df$fecha_hechos2), ]
+
 ## head(df[which(str_detect(df$fecha_hechos2,
 ##                 "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}") != TRUE),])
 

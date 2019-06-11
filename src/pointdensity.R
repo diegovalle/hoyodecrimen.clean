@@ -4,9 +4,9 @@ print("Point density maps")
 
 density_last_year <- function(crime){
   points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
-    filter(date <= max(date) & 
+    filter(date <= max(date, na.rm = TRUE) & 
              date > ceiling_date(
-               floor_date(ymd(max(date)), "month") - years(1), 
+               floor_date(ymd(max(date, na.rm = TRUE)), "month") - years(1), 
                "month")
     ) %>%
     filter(crime == !!crime) %>%
@@ -14,7 +14,7 @@ density_last_year <- function(crime){
   SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
                              date_col = "date", grid_size = 0.1, radius = 1)
   return(list("density" = SD_density, "start" = min(points$date),
-              "end" = max(points$date)))
+              "end" = max(points$date, na.rm = TRUE)))
 }
 
 density_chart <- function(crime, ll) {
