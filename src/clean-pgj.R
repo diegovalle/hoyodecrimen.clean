@@ -212,8 +212,8 @@ df <- filter(df, Año >= 2016)
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}")))
 
-
-df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "YmdTz")
+#parse_date_time2 to avoid format guessing
+df$fecha_hechos2 <- parse_date_time2(df$fecha_hechos, "YmdTz")
 
 expect_true(all(str_detect(df$fecha_hechos2,
                            "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
