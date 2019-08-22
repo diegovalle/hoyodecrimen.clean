@@ -212,8 +212,7 @@ df <- filter(df, Año >= 2016)
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}")))
 
-#parse_date_time2 to avoid format guessing
-df$fecha_hechos2 <- parse_date_time2(df$fecha_hechos, "YmdTz")
+df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "YmdTz")
 
 expect_true(all(str_detect(df$fecha_hechos2,
                            "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
@@ -269,7 +268,7 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
 
 
 df %>%
-  mutate(date = fast_strptime(df$fecha_hechos2,
+  mutate(date = fast_strptime(as.character(df$fecha_hechos2),
                               format = "%Y-%m-%d %H:%M:%S",
                               lt = FALSE)) %>%
   mutate(date = force_tz(date, "America/Mexico_City")) %>%
