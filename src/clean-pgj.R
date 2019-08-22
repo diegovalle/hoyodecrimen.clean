@@ -212,45 +212,26 @@ df <- filter(df, Año >= 2016)
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-\\d{2}:\\d{2}")))
 
-# remove timezone
-df$fecha_hechos2 <- str_replace(df$fecha_hechos,
-                                "(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})-\\d{2}:\\d{2}",
-                                "\\1")
-# replace T with space
-df$fecha_hechos2 <- str_replace(df$fecha_hechos2,
-                                "T",
-                                " ")
+
+df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "YmdTz")
 
 expect_true(all(str_detect(df$fecha_hechos2,
                            "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
 expect_true(max(df$fecha_hechos2) < Sys.Date())
 
 expect_true(all(df$Año), year(df$fecha_hechos2))
-# expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
-#              str_replace_all(df$Mes,
-#                              c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
-#                                "Abril" = "Apr", "Mayo" = "May", "Junio" = "Jun",
-#                                "Julio" = "Jul", "Agosto" = "Aug", "Septiembre" = "Sep",
-#                                "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
-# )
-df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
+expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
+             str_replace_all(df$Mes,
+                             c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
+                               "Abril" = "Apr", "Mayo" = "May", "Junio" = "Jun",
+                               "Julio" = "Jul", "Agosto" = "Aug", "Septiembre" = "Sep",
+                               "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
+)
 
-## df <- df[!is.na(df$fecha_hechos2), ]
-
-## head(df[which(str_detect(df$fecha_hechos2,
-##                 "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}") != TRUE),])
-
-#df$Mes.y.año <- str_replace(df$Mes.y.año, "feb-19", "2019-02")
-#df$Mes.y.año <- str_replace(df$Mes.y.año, "(\\d{2})/(\\d{4})", "\\2-\\1")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
-
-#df$Fecha.inicio <- str_replace(df$Fecha.inicio,
-#                               "(\\d{2})/(\\d{2})/(\\d{4})( \\d{2}:\\d{2})",
-#                               "\\3-\\2-\\1\\4:00")
-
-#expect_equal( df$Mes.y.año, str_sub(df$Fecha.inicio, 1, 7))
-#expect_true(all(str_detect(df$Fecha.inicio,
-#                           "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")))
+#df$fecha_hechos2 <- df$fecha_hechos2 %>% 
+#  with_tz("America/Mexico_City")
+df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 
 ### File for the database
 
@@ -300,16 +281,16 @@ df %>%
   select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
 
-## Sometimes there are probles with the timezone in the data
+## Sometimes there are problems with the timezone in the data
 ## check that most homicides occur at ~midnight
 df %>%
   mutate(hour = as.numeric(str_sub(fecha_hechos2, 11, 13))) %>%
-  filter(crime == "HOMICIDIO DOLOSO") %>%
+  filter(crime == "ROBO A BORDO DE METRO C.V.") %>% #ROBO A BORDO DE METRO C.V.
   group_by(hour) %>%
   summarise(n = n()) %>%
   ggplot(aes(hour, n)) +
   geom_col() +
-  ggtitle("Most homicides should occur at midnight")
+  ggtitle("Most homicides should occur at midnight or for robo de metro none during late night")
 ggsave(filename = "graphs/check.png", width = 7, height = 5, dpi = 100)
 
 cuadrantes %>%
@@ -323,3 +304,19 @@ cuadrantes %>%
     labs(title = "Crimes in Mexico City") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
+
+
+# a=read.csv("~/Downloads/denuncias-victimas-pgj.csv", sep = ";")
+# 
+# a$date2 <- if_else(str_detect(a$FechaHecho, "-"), 
+#                    ymd_hms(a$FechaHecho), 
+#                    dmy_hm(a$FechaHecho))
+# 
+# a %>%
+#   mutate(hour = hour(date2)) %>%
+#   filter(Categoria == "HOMICIDIO DOLOSO") %>%
+#   group_by(hour) %>%
+#   summarise(n = n()) %>%
+#   ggplot(aes(hour, n)) +
+#   geom_col() +
+#   ggtitle("Most homicides should occur at midnight")
