@@ -19,4 +19,4 @@ jobs:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
-      run: zip elcrimen.zip $GITHUB_WORKSPACE/output/* $GITHUB_WORKSPACE/graphs/* && $GITHUB_WORKSPACE/upload_to_b2.sh elcrimen.zip
+      run: zip hoyodecrimen-clean.zip $GITHUB_WORKSPACE/output/* $GITHUB_WORKSPACE/graphs/* && $GITHUB_WORKSPACE/upload_to_b2.sh hoyodecrimen-clean.zip
