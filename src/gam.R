@@ -41,7 +41,7 @@ gam_model <- function(df, nb, k, crime) {
                         xt = list(nb = nb)) + s(Sector_hoy, bs = "re") + offset(log(SUMPOB1)),
               data = df,
               method = "REML",
-              family = ziP(link = "log"),
+              family = ziP,
               control = ctrl
     )
   # m2 <- gam(count ~ s(id, 
