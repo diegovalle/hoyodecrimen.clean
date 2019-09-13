@@ -13,7 +13,7 @@ jobs:
     - name: Clean Data for HoyoDeCrimen
       run: |
         docker pull diegovalle/docker-rstanarm:latest
-        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/elcrimen diegovalle/docker-rstanarm -c "cd $GITHUB_WORKSPACE && Rscript run-all.R"
+        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm -c "cd /hoyodecrimen  && Rscript run-all.R"
     - name: upload artifacts
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
