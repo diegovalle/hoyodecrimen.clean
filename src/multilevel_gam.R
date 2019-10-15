@@ -9,12 +9,13 @@ df <- cuadrantes %>%
   group_by(crime) %>%
   mutate(total_count = sum(count)) %>%
   ungroup %>%
-  filter(total_count / (nrow(df) / length(unique(df$crime))) > 20) %>%
+  filter(total_count /  length(unique(cuadrantes$date)) > 20) %>%
   group_by(date, crime) %>%
   summarise(n = sum(count)) %>%
   mutate(month = month(date)) %>%
   mutate(time = as.numeric(as.Date(date))) %>%
   mutate(logn = log1p(n / days_in_month(as.Date(date)) * 30)) 
+
 
 duration <- days_in_month(as.Date(df$date)) / (365/12)
 
@@ -23,7 +24,7 @@ m1 <- stan_gamm4(n ~ s(time, by = crime) + offset(log(duration)), # + s(month, b
                  random = ~(1 | crime), 
                  data = df, 
                  chains = 2, 
-                 iter = 500,
+                 iter = 1000,
                  adapt_delta = .99, 
                  cores = 2, 
                  seed = 12345)
@@ -58,7 +59,7 @@ trends <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
   dim(d1)
   d1[1:5, 1:5]
   sum(d1[, ndates] >= 0)
-  qt <- quantile(d1[, ndates], c(.05, .95))
+  qt <- quantile(d1[, ndates], c(.1, .90))
   med <- median(d1[, ndates])
   if (qt[1] < 0 & qt[2] < 0)
     return(data.frame(crime = crime_name, 
@@ -100,35 +101,38 @@ sims <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
   return(sims)
 }))
 
+df$date <- as.Date(df$date)
 sims <- left_join(sims, trends, by = "crime")
+sims <- left_join(sims, df[, c("crime", "date", "n")], by = c("crime", "date"))
 sims <- sims %>%
   mutate(fd = as.numeric(fd)) %>%
   arrange(desc(fd)) %>%
   mutate(crime = factor(crime, levels = unique(crime)))
 
 
-p <- ggplot(sims, aes(x = as.Date(date), y = expm1(rate), group = sim)) +
+
+p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
   geom_line(alpha = 0.1, aes(color = trend), size = .05) +
-  scale_color_manual("tendencia\núltimo mes",
-                     values = c("positive" = "#e41a1c", 
-                                "negative" = "#1f78b4"), 
-                     labels = c("positiva", "negativa", "no significativa"),
-                     breaks = c("positive", "negative", NA),
-                     na.value = "#cab2d6") +
-  geom_point(data = df, aes(as.Date(date), n, group = crime), 
-             fill = "#f8766d", 
+  geom_point(aes(date, n),
+             fill = "#f8766d",
              color = "black",
              shape = 21,
              size = 1.1) +
+  scale_color_manual("tendencia\núltimo mes",
+                     values = c("positive" = "#e41a1c", 
+                                "negative" = "#1f78b4"), 
+                     labels = c("al alza", "a la baja", "no significativa"),
+                     breaks = c("al alza", "a la baja", NA),
+                     na.value = "#cab2d6") +
   expand_limits(y = 0) +
   xlab("fecha") +
-  ylab("número") +
-  labs(title = "Número de crimenes en CDMX y 1000 simulaciones del posterior de un modelo aditivo multinivel, por crimen",
+  ylab("número de crímenes") +
+  labs(title = "Tendencias de crímenes en CDMX y 1000 simulaciones del posterior de un modelo aditivo multinivel, por crimen",
        subtitle = "El color de cada crimen corresponde a la tendencia del último mes (primera derivada, intervalo de credibilidad del 90%).",
-       caption = "Fuente: PGJ Carpetas de Investigación") +
+       caption = "Fuente: PGJ-CDMX Carpetas de Investigación") +
   theme_ft_rc(base_family = "Arial Narrow", strip_text_size = 10) +
-  facet_wrap(~crime, scale = "free_y", ncol = 4) + 
-  guides(color = guide_legend(override.aes = list(size = 2, alpha = 1)))
+  guides(color = guide_legend(override.aes = list(size = 2, alpha = 1))) +
+  facet_wrap(~crime, scale = "free_y", ncol = 4)
 
 ggsave("graphs/predicted.png", height = 14, width = 14, dpi = 100)
 

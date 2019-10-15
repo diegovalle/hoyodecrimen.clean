@@ -1,3 +1,4 @@
+
 print("Cleaning PGJ-CDMX data")
 #https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/export/?disjunctive.delito
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
@@ -308,19 +309,3 @@ cuadrantes %>%
     labs(title = "Crimes in Mexico City") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
-
-
-# a=read.csv("~/Downloads/denuncias-victimas-pgj.csv", sep = ";")
-# 
-# a$date2 <- if_else(str_detect(a$FechaHecho, "-"), 
-#                    ymd_hms(a$FechaHecho), 
-#                    dmy_hm(a$FechaHecho))
-# 
-# a %>%
-#   mutate(hour = hour(date2)) %>%
-#   filter(Categoria == "HOMICIDIO DOLOSO") %>%
-#   group_by(hour) %>%
-#   summarise(n = n()) %>%
-#   ggplot(aes(hour, n)) +
-#   geom_col() +
-#   ggtitle("Most homicides should occur at midnight")
