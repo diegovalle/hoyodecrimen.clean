@@ -1,3 +1,7 @@
+if (Sys.getenv("CI") == "true") {
+  install.packages("hrbrthemes", repos = "https://cinc.rud.is")
+}
+
 ## Auto-Install packages
 .packs <- c("gdata", "zoo", "testthat", "readr", "maptools",
             "ggplot2", "rgdal", "lubridate", "stringr",

@@ -23,10 +23,10 @@ m1 <- stan_gamm4(n ~ s(time, by = crime) + offset(log(duration)), # + s(month, b
                  family = poisson, 
                  random = ~(1 | crime), 
                  data = df, 
-                 chains = 2, 
-                 iter = 1000,
+                 chains = 4,
+                 iter = 2000,
                  adapt_delta = .99, 
-                 cores = 2, 
+                 cores = 4,
                  seed = 12345)
 save(m1, file = "clean-data/m1_crimes.RData")
 
@@ -122,7 +122,7 @@ p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
                      values = c("positive" = "#e41a1c", 
                                 "negative" = "#1f78b4"), 
                      labels = c("al alza", "a la baja", "no significativa"),
-                     breaks = c("al alza", "a la baja", NA),
+                     breaks = c("positive", "negative", NA),
                      na.value = "#cab2d6") +
   expand_limits(y = 0) +
   xlab("fecha") +
@@ -134,6 +134,6 @@ p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
   guides(color = guide_legend(override.aes = list(size = 2, alpha = 1))) +
   facet_wrap(~crime, scale = "free_y", ncol = 4)
 
-ggsave("graphs/predicted.png", height = 14, width = 14, dpi = 100)
+ggsave("graphs/trends.png", height = 14, width = 14, dpi = 100)
 
 
