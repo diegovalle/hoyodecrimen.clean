@@ -225,6 +225,7 @@ expect_true(all(str_detect(df$fecha_hechos2,
 expect_true(max(df$fecha_hechos2) < Sys.Date())
 
 expect_true(all(df$Año), year(df$fecha_hechos2))
+df <- filter(df, Mes != "data")
 expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
              str_replace_all(df$Mes,
                              c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
