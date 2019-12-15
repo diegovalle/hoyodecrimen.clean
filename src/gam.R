@@ -211,22 +211,22 @@ p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 ggsave("graphs/cdmx-smooth-latest-HOMICIDIO.png", 
        plot = p, dpi = 100, width = 10, height = 13)
 
-ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.", cuad_map, k = k)
-p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
-ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-CV.png", 
-       plot = p, dpi = 100, width = 10, height = 13)
-
-ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR S.V.", cuad_map, k = k)
-p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
-ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-SV.png", 
-       plot = p, dpi = 100, width = 10, height = 13)
-
-ll <- gam_crime_last_year("ROBO A TRANSEUNTE C.V.", cuad_map, k = k)
-p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
-ggsave("graphs/cdmx-smooth-latest.png-ROBO-A-TRANSEUNTE-CV.png", 
-       plot = p, dpi = 100, width = 10, height = 13)
-
-ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
-p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
-ggsave("graphs/cdmx-smooth-latest.png-LESIONES-POR-ARMA-DE-FUEGO.png", 
-       plot = p, dpi = 100, width = 10, height = 13)
+# ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.", cuad_map, k = k)
+# p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
+# ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-CV.png", 
+#        plot = p, dpi = 100, width = 10, height = 13)
+# 
+# ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR S.V.", cuad_map, k = k)
+# p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
+# ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-SV.png", 
+#        plot = p, dpi = 100, width = 10, height = 13)
+# 
+# ll <- gam_crime_last_year("ROBO A TRANSEUNTE C.V.", cuad_map, k = k)
+# p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
+# ggsave("graphs/cdmx-smooth-latest.png-ROBO-A-TRANSEUNTE-CV.png", 
+#        plot = p, dpi = 100, width = 10, height = 13)
+# 
+# ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
+# p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
+# ggsave("graphs/cdmx-smooth-latest.png-LESIONES-POR-ARMA-DE-FUEGO.png", 
+#        plot = p, dpi = 100, width = 10, height = 13)
