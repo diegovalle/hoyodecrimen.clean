@@ -48,7 +48,7 @@ mcrime <- local({
                      "cve_sector", 
                      "no_cuadrante", "population")
   
-  muns <- read.csv(file.path("clean-data", "municipio_codes.csv"))
+  muns <- read.csv(file.path("data", "municipio_codes.csv"))
   mcrime <- merge(mcrime, muns, all.x = TRUE)
   mcrime <- mcrime[order(mcrime$cuadrante, mcrime$crime, mcrime$date),] 
   write.csv(mcrime, file.path("clean-data", "cuadrantes-hoyodecrimen.csv"), row.names = FALSE)
