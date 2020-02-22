@@ -6,7 +6,7 @@ density_points_date <- function(crime) {
   points <- read.csv("clean-data/crime-lat-long-pgj.csv") %>%
     filter(date <= max(date, na.rm = TRUE) & 
              date > ceiling_date(
-               floor_date(ymd(max(date, na.rm = TRUE)), "month") - years(3), 
+               floor_date(ymd(max(date, na.rm = TRUE)), "month") - years(2), 
                "month")
     ) %>%
     filter(crime == !!crime) %>%

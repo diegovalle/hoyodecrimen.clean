@@ -209,6 +209,10 @@ df %>%
 df <- df[!is.na(df$fecha_hechos), ]
 df <- filter(df, Año >= 2016)
 
+df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
+                                   "^(\\d{2})/(\\d{2})/(\\d{4})", 
+                                   "\\3-\\2-\\1")
+
 #validate date format
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
