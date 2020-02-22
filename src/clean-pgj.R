@@ -1,4 +1,4 @@
-
+#
 print("Cleaning PGJ-CDMX data")
 #https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/export/?disjunctive.delito
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
@@ -19,6 +19,23 @@ df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
 df$Longitud <- as.numeric(df$Longitud)
 unique(df$Categoría.de.delito)
+df$Categoría.de.delito <- str_replace_all(df$Categoría.de.delito, 
+                c("ROBO A TRANSEUNTE EN V\u0099A P\u0082BLICA CON Y SIN VIOLENCIA" =
+                    "ROBO A TRANSEUNTE EN VÍA PÚBLICA CON Y SIN VIOLENCIA" , 
+                  "ROBO A CASA HABITACI\u0085N CON VIOLENCIA" =
+                    "ROBO A CASA HABITACIÓN CON VIOLENCIA", 
+                  "ROBO DE VEH\u0099CULO CON Y SIN VIOLENCIA" =
+                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" , 
+                  "VIOLACI\u0085N" =
+                    "VIOLACIÓN" , 
+                  "ROBO DE VEHÖCULO CON Y SIN VIOLENCIA" =
+                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" , 
+                  "VIOLACIàN" =
+                    "VIOLACIÓN" ,
+                  "ROBO A CASA HABITACIàN CON VIOLENCIA" =
+                    "ROBO A CASA HABITACIÓN CON VIOLENCIA" ,
+                  "ROBO A TRANSEUNTE EN VÖA PéBLICA CON Y SIN VIOLENCIA" =
+                    "ROBO A TRANSEUNTE EN VÍA PÚBLICA CON Y SIN VIOLENCIA"))
 df <- filter(df, Categoría.de.delito %in% c(
   "HOMICIDIO DOLOSO",
   "LESIONES DOLOSAS POR DISPARO DE ARMA DE FUEGO",
