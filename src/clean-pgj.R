@@ -1,11 +1,11 @@
-#
+
 print("Cleaning PGJ-CDMX data")
 #https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/?format=csv&timezone=America/Mexico_City&lang=es&use_labels_for_header=true&csv_separator=%2C
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
              "carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/",
              "?format=csv&timezone=America/",
              "Mexico_City&use_labels_for_header=true")
-df <- read.csv(url, sep = ";")
+df <- read.csv(url, sep = ";", fileEncoding = "UTF-8")
 
 # rename columns to standarize names
 df <- df %>% rename(Latitud = latitud,
@@ -123,7 +123,7 @@ df$crime <- df$Categoría.de.delito
 unique(str_subset(df$crime, "CON Y SIN"))
 
 df$crime[str_detect(df$crime, "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA") &
-  str_detect(df$Delito, "CON")] <- "ROBO DE VEHÍCULO CON VIOLENCIA"
+  str_detect(df$Delito, "CON|C/V")] <- "ROBO DE VEHÍCULO CON VIOLENCIA"
 df$crime[str_detect(df$crime, "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA") &
            str_detect(df$Delito, "SIN|S/V")] <- "ROBO DE VEHÍCULO SIN VIOLENCIA"
 
