@@ -2,11 +2,31 @@
 print("Cleaning PGJ-CDMX data")
 #https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/?format=csv&timezone=America/Mexico_City&lang=es&use_labels_for_header=true&csv_separator=%2C
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
-             "carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/",
-             "?format=csv&timezone=America/",
-             "Mexico_City&use_labels_for_header=true")
-df <- read.csv(url, sep = ";", fileEncoding = "UTF-8")
+              "carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/",
+              "?format=csv&timezone=America/",
+              "Mexico_City&use_labels_for_header=true&csv_separator=%2C")
+carpetas <- read_csv(url, col_types = cols(
+  ao_hechos = col_double(),
+  mes_hechos = col_character(),
+  fecha_hechos = col_character(),
+  delito = col_character(),
+  categoria_delito = col_character(),
+  fiscalia = col_character(),
+  agencia = col_character(),
+  unidad_investigacion = col_character(),
+  alcaldia_hechos = col_character(),
+  colonia_hechos = col_character(),
+  ao_inicio = col_double(),
+  mes_inicio = col_character(),
+  fecha_inicio = col_character(),
+  calle_hechos = col_character(),
+  calle_hechos2 = col_character(),
+  longitud = col_double(),
+  latitud = col_double(),
+  geopoint = col_character()
+))
 
+df <- carpetas
 # rename columns to standarize names
 df <- df %>% rename(Latitud = latitud,
               Longitud = longitud,
@@ -246,7 +266,7 @@ expect_true(all(str_detect(df$fecha_hechos2,
                            "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
 expect_true(max(df$fecha_hechos2) < Sys.Date())
 
-expect_true(all(df$Año), year(df$fecha_hechos2))
+expect_identical(df$Año, year(df$fecha_hechos2))
 df <- filter(df, Mes != "data")
 expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
              str_replace_all(df$Mes,
@@ -256,10 +276,10 @@ expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
                                "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
 )
 
+df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 #df$fecha_hechos2 <- df$fecha_hechos2 %>% 
 #  with_tz("America/Mexico_City")
-df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 
 ### File for the database
 
@@ -326,9 +346,9 @@ cuadrantes %>%
   summarise(n = sum(count)) %>%
   ggplot(aes(as.Date(date), n)) +
     geom_line() +
-    xlab("year") +
-    ylab("number of crimes") +
+    xlab("fecha") +
+    ylab("número de crímenes") +
     expand_limits(y = 0) +
-    labs(title = "Crimes in Mexico City") +
+    labs(title = "Crimen en la Ciudad de México") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
