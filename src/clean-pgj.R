@@ -1,6 +1,6 @@
 #
 print("Cleaning PGJ-CDMX data")
-#https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/export/?disjunctive.delito
+#https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/?format=csv&timezone=America/Mexico_City&lang=es&use_labels_for_header=true&csv_separator=%2C
 url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
              "carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/",
              "?format=csv&timezone=America/",
@@ -125,7 +125,7 @@ unique(str_subset(df$crime, "CON Y SIN"))
 df$crime[str_detect(df$crime, "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA") &
   str_detect(df$Delito, "CON")] <- "ROBO DE VEHÍCULO CON VIOLENCIA"
 df$crime[str_detect(df$crime, "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA") &
-           str_detect(df$Delito, "SIN")] <- "ROBO DE VEHÍCULO SIN VIOLENCIA"
+           str_detect(df$Delito, "SIN|S/V")] <- "ROBO DE VEHÍCULO SIN VIOLENCIA"
 
 df$crime[str_detect(df$crime,
                     "ROBO A PASAJERO A BORDO DEL METRO CON Y SIN VIOLENCIA") &
@@ -163,6 +163,7 @@ df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
            str_detect(df$Delito, "CON")] <- "ROBO A TRANSPORTISTA CON VIOLENCIA"
 df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
            str_detect(df$Delito, "SIN")] <- "ROBO A TRANSPORTISTA SIN VIOLENCIA"
+
 
 
 test_that("", {
