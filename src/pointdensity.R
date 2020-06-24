@@ -18,6 +18,8 @@ density_last_year <- function(crime){
 }
 
 density_chart <- function(crime, ll) {
+  ll$density <- subset(ll$density, lat != 0)
+  ll$density <- subset(ll$density, lon != 0)
   density_title <- str_c("Point density of ",
                          crime,
                          " counts in CDMX with a 1 km",

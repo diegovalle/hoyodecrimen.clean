@@ -35,6 +35,8 @@ get_breaks <- function(ll) {
 }
 
 plot_density_dates <- function(crime, ll) {
+  ll$density <- subset(ll$density, lat != 0)
+  ll$density <- subset(ll$density, lon != 0)
   breaks <- get_breaks(ll)
   qmplot(lon, lat, data =  ll[["density"]], geom = "blank",
          zoom = 11, maptype = "terrain", darken = .5, legend = "topleft") +
