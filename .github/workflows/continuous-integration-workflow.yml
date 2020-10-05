@@ -11,8 +11,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Clean Data for HoyoDeCrimen
+      env:
+        DOCKER_USERNAME: ${{  secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{  secrets.DOCKER_PASSWORD }}
       run: |
-        echo -n $DOCKER_PASSWORD | docker login -u "$DOCKER_USERNAME" --password-stdin
+        docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         docker pull diegovalle/docker-rstanarm:latest
         docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm -c "cd /hoyodecrimen  && Rscript run-all.R"
     - name: Collect artifacts if analysis failed
