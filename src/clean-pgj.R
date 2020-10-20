@@ -115,7 +115,8 @@ expect_equal(unique(cuad_map@data$Sector_hoy),
                "DINAMO", "ARAGON", "ALPES", "CORREDOR-CENTRO",
                "MORELOS", "EL YAQUI",
                "PADIERNA", "TEPEPAN", "CUAJIMALPA"))
-ID <- filter(df, !is.na(df$Longitud) | !is.na(df$Latitud))
+ID <- filter(df, !is.na(df$Longitud))
+ID <- filter(ID, !is.na(ID$Latitud))
 coordinates(ID) <- ~ Longitud + Latitud
 proj4string(ID) <- CRS("+proj=longlat +datum=WGS84")
 ID <- spTransform(ID, proj4string(cuad_map))
@@ -250,8 +251,14 @@ df <- filter(df, Año >= 2016)
 df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
                                    "^(\\d{2})/(\\d{2})/(\\d{4})", 
                                    "\\3-\\2-\\1")
+# df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
+#                                    "^(\\d{4}-\\d{2}-\\d{2})T", 
+#                                    "\\1 ")
 
 #validate date format
+#which(!str_detect(df$fecha_hechos, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}"))
+df$fecha_hechos <- str_replace_all(df$fecha_hechos, "T|Z", " ")
+#df$fecha_hechos <- as.character(parse_date_time(df$fecha_hechos, "ymd HMS"))
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
 
@@ -352,3 +359,4 @@ cuadrantes %>%
     labs(title = "Crimen en la Ciudad de México") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
+
