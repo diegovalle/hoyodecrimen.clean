@@ -137,15 +137,15 @@ gam_crime_last_year <- function(crime = "HOMICIDIO DOLOSO", cuad_map, k,
 crime_gam_chart <- function(cuad_map, df, start_date, end_date) {
   labels <- data.frame(
     name = c("Tepito", " San Felipe de Jesús",
-             "Cerro del Chiquihuite", "Ermita Zaragoza",
+             "Cerro del Chiquihuite", "El Hoyo",
              "Central de Abastos", "Topilejo", "La Raza",
-             "Volcán Xaltepec"),
+             "Zapotitlán", "San Miguel Ajusco"),
     lat = c(19.445793, 19.496768,
-            19.542162, 19.367161,
-            19.373099, 19.199720, 19.464604, 19.3163),
+            19.542162, 19.3723,
+            19.373099, 19.199720, 19.464604, 19.296392, 19.2218),
     long = c(-99.128877, -99.075112,
-             -99.134397, -98.999505,
-             -99.091441, -99.143017, -99.14233, -99.031966),
+             -99.134397, -99.028994,
+             -99.091441, -99.143017, -99.14233, -99.034282, -99.20707),
     group = NA
   )
   
