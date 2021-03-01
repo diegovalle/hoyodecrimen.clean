@@ -1,11 +1,9 @@
 
 print("Cleaning PGJ-CDMX data")
-#https://datos.cdmx.gob.mx/explore/dataset/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/?format=csv&timezone=America/Mexico_City&lang=es&use_labels_for_header=true&csv_separator=%2C
-url <- paste0("https://datos.cdmx.gob.mx/explore/dataset/",
-              "carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico/download/",
-              "?format=csv&timezone=America/",
-              "Mexico_City&use_labels_for_header=true&csv_separator=%2C")
+# https://archivo.datos.cdmx.gob.mx/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico.csv
+url <- paste0("https://archivo.datos.cdmx.gob.mx/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico.csv")
 carpetas <- read_csv(url, col_types = cols(
+  id = col_double(),
   ao_hechos = col_double(),
   mes_hechos = col_character(),
   fecha_hechos = col_character(),
