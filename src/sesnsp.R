@@ -5,7 +5,7 @@ download.file("https://data.diegovalle.net/elcrimen/nm-fuero-comun-estados.csv.g
                tmp_pgj)
 pgj <- read.csv(tmp_pgj, stringsAsFactors = FALSE)
 pgj <- pgj %>%
-  filter(state_code == 9 & date >= "2016-01")
+  filter(state_code == 9 & date >= "2019-01")
 
 pgj$crime <- NA
 pgj[pgj$subtipo == "HOMICIDIO DOLOSO", ]$crime <-  "HOMICIDIO DOLOSO"

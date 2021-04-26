@@ -1,37 +1,28 @@
 
 print("Cleaning PGJ-CDMX data")
-# https://archivo.datos.cdmx.gob.mx/carpetas-de-investigacion-pgj-de-la-ciudad-de-mexico.csv
-url <- paste0("https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv")
+# https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
+url <- paste0("https://archivo.datos.cdmx.gob.mx/victimas_completa_marzo_2021.csv")
 carpetas <- read_csv(url, col_types = cols(
-  ao_hechos = col_double(),
-  mes_hechos = col_character(),
-  fecha_hechos = col_datetime(format = ""),
-  ao_inicio = col_double(),
-  mes_inicio = col_character(),
-  fecha_inicio = col_character(),
-  delito = col_character(),
-  fiscalia = col_character(),
-  agencia = col_character(),
-  unidad_investigacion = col_character(),
-  categoria_delito = col_character(),
-  calle_hechos = col_character(),
-  calle_hechos2 = col_character(),
-  colonia_hechos = col_character(),
-  alcaldia_hechos = col_character(),
-  competencia = col_logical(),
-  longitud = col_double(),
+  .default = col_character(),
+  idCarpeta = col_double(),
+  Año_inicio = col_double(),
+  Edad = col_double(),
+  Año_hecho = col_double(),
+  HoraHecho = col_time(format = ""),
+  HoraInicio = col_time(format = ""),
   latitud = col_double(),
-  tempo = col_logical()
+  longitud = col_double()
 ))
 
 df <- carpetas
 # rename columns to standarize names
 df <- df %>% rename(Latitud = latitud,
               Longitud = longitud,
-              Categoría.de.delito = categoria_delito,
-              Año = ao_hechos,
-              Mes = mes_hechos,
-              Delito = delito)
+              Categoría.de.delito = Categoria,
+              fecha_hechos = FechaHecho,
+              Año = Año_hecho,
+              Mes = Mes_hecho,
+              Delito = Delito)
 
 df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
@@ -244,7 +235,7 @@ df %>%
 ## Correct errors in the data
 
 df <- df[!is.na(df$fecha_hechos), ]
-df <- filter(df, Año >= 2016)
+df <- filter(df, Año >= 2019)
 
 df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
                                    "^(\\d{2})/(\\d{2})/(\\d{4})", 
@@ -256,6 +247,8 @@ df$fecha_hechos <- str_replace_all(df$fecha_hechos,
 #validate date format
 #which(!str_detect(df$fecha_hechos, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}"))
 df$fecha_hechos <- str_replace_all(df$fecha_hechos, "T|Z", " ")
+df$fecha_hechos <- str_c(df$fecha_hechos, " ", df$HoraHecho)
+df <- df[!is.na(df$fecha_hechos), ]
 #df$fecha_hechos <- as.character(parse_date_time(df$fecha_hechos, "ymd HMS"))
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
