@@ -1,7 +1,7 @@
 
 print("Cleaning PGJ-CDMX data")
 # https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
-url <- paste0("https://archivo.datos.cdmx.gob.mx/victimas_completa_marzo_2021.csv")
+url <- paste0("https://archivo.datos.cdmx.gob.mx/carpetas_completa_abril_2021.csv")
 carpetas <- read_csv(url, col_types = cols(
   .default = col_character(),
   idCarpeta = col_double(),
@@ -18,11 +18,11 @@ df <- carpetas
 # rename columns to standarize names
 df <- df %>% rename(Latitud = latitud,
               Longitud = longitud,
-              Categoría.de.delito = Categoria,
-              fecha_hechos = FechaHecho,
-              Año = Año_hecho,
-              Mes = Mes_hecho,
-              Delito = Delito)
+              Categoría.de.delito = categoria_delito,
+              fecha_hechos = fecha_hechos,
+              Año = ao_hechos,
+              Mes = mes_hechos,
+              Delito = delito)
 
 df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
@@ -220,12 +220,12 @@ df$crime <- str_replace_all(df$crime,
 # remove accents
 df$crime <- iconv(df$crime, from = "UTF-8", to = "ASCII//TRANSLIT")
 
-
+df$Año <- as.numeric(df$Año)
 df %>%
   filter(crime == "HOMICIDIO DOLOSO") %>%
   group_by(Año, Mes, Categoría.de.delito) %>%
   summarise(n = n()) %>%
-  arrange(-Año)
+  arrange(desc(Año))
 
 df %>%
   group_by(crime) %>%
@@ -247,7 +247,7 @@ df$fecha_hechos <- str_replace_all(df$fecha_hechos,
 #validate date format
 #which(!str_detect(df$fecha_hechos, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}"))
 df$fecha_hechos <- str_replace_all(df$fecha_hechos, "T|Z", " ")
-df$fecha_hechos <- str_c(df$fecha_hechos, " ", df$HoraHecho)
+#df$fecha_hechos <- str_c(df$fecha_hechos, " ", df$HoraHecho)
 df <- df[!is.na(df$fecha_hechos), ]
 #df$fecha_hechos <- as.character(parse_date_time(df$fecha_hechos, "ymd HMS"))
 expect_true(all(str_detect(df$fecha_hechos,
@@ -336,7 +336,7 @@ df %>%
   summarise(n = n()) %>%
   ggplot(aes(hour, n)) +
   geom_col() +
-  ggtitle("Most homicides should occur at midnight or for robo de metro none during late night")
+  ggtitle("Robo de Metro - Most homicides should occur at midnight or for robo de metro none during late night")
 ggsave(filename = "graphs/check.png", width = 7, height = 5, dpi = 100)
 
 cuadrantes %>%
