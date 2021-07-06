@@ -1,17 +1,27 @@
 
 print("Cleaning PGJ-CDMX data")
 # https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
-url <- paste0("https://archivo.datos.cdmx.gob.mx/carpetas_completa_abril_2021.csv")
+url <- paste0("http://archivo.datos.cdmx.gob.mx/carpetas_completa_mayo_2021.csv")
 carpetas <- read_csv(url, col_types = cols(
-  .default = col_character(),
-  idCarpeta = col_double(),
-  Año_inicio = col_double(),
-  Edad = col_double(),
-  Año_hecho = col_double(),
-  HoraHecho = col_time(format = ""),
-  HoraInicio = col_time(format = ""),
+  ao_hechos = col_double(),
+  mes_hechos = col_character(),
+  fecha_hechos = col_datetime(format = ""),
+  ao_inicio = col_double(),
+  mes_inicio = col_character(),
+  fecha_inicio = col_datetime(format = ""),
+  delito = col_character(),
+  fiscalia = col_character(),
+  agencia = col_character(),
+  unidad_investigacion = col_character(),
+  categoria_delito = col_character(),
+  calle_hechos = col_character(),
+  calle_hechos2 = col_character(),
+  colonia_hechos = col_character(),
+  alcaldia_hechos = col_character(),
+  competencia = col_logical(),
+  longitud = col_double(),
   latitud = col_double(),
-  longitud = col_double()
+  tempo = col_logical()
 ))
 
 df <- carpetas
@@ -172,7 +182,11 @@ df$crime[str_detect(df$crime,
 df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
            str_detect(df$Delito, "CON")] <- "ROBO A TRANSPORTISTA CON VIOLENCIA"
 df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
+           str_detect(df$Delito, "C/V")] <- "ROBO A TRANSPORTISTA CON VIOLENCIA"
+df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
            str_detect(df$Delito, "SIN")] <- "ROBO A TRANSPORTISTA SIN VIOLENCIA"
+df$crime[str_detect(df$crime, "ROBO A TRANSPORTISTA CON Y SIN VIOLENCIA") &
+           str_detect(df$Delito, "S/V")] <- "ROBO A TRANSPORTISTA SIN VIOLENCIA"
 
 
 

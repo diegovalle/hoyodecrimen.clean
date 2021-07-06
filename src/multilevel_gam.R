@@ -19,7 +19,10 @@ df <- cuadrantes %>%
 
 duration <- days_in_month(as.Date(df$date)) / (365/12)
 
-m1 <- stan_gamm4(n ~ s(time, by = crime) + offset(log(duration)), # + s(month, bs = "cc", k = 12), #,
+# Add COVID pandemic variable
+df$covid <- if_else(df$date > "2020-03-01", TRUE, FALSE)
+
+m1 <- stan_gamm4(n ~ s(time, by = crime) + offset(log(duration)) + covid, # + s(month, bs = "cc", k = 12), #,
                  family = poisson, 
                  random = ~(1 | crime), 
                  data = df, 
