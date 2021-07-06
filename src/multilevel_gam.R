@@ -44,11 +44,12 @@ ndates <- length(dates)
 
 trends <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
   crime_name <- x
-  inc <- grep(crime_name, colnames(predict(m1$jam, type = "lpmatrix")))
+  inc <- grep(str_c(crime_name, "|covid"), 
+              colnames(predict(m1$jam, type = "lpmatrix")))
   #X0 <- predict(m1$jam, type = 'lpmatrix')[, c(1, inc)]
   
   
-  eps <- 1e-7
+  eps <- 1e-3
   newDFeps <- df 
   newDFeps$time <- df$time + eps
   newDFeps$duration <- log(1)
@@ -62,7 +63,7 @@ trends <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
   dim(d1)
   d1[1:5, 1:5]
   sum(d1[, ndates] >= 0)
-  qt <- quantile(d1[, ndates], c(.1, .90))
+  qt <- quantile(d1[, ndates], c(.1, .9))
   med <- median(d1[, ndates])
   if (qt[1] < 0 & qt[2] < 0)
     return(data.frame(crime = crime_name, 
@@ -82,7 +83,8 @@ trends <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
 sims <- do.call(rbind, lapply(as.character(unique(df$crime)), function(x) {
   crime_name <- x
   print(x)
-  inc <- grep(crime_name, colnames(predict(m1$jam, type = "lpmatrix")))
+  inc <- grep(str_c(crime_name, "|covid"), 
+              colnames(predict(m1$jam, type = "lpmatrix")))
   
   X0 <- as.matrix(m1$x)[which(df$crime == crime_name), c(1, inc)]
   sims <- as.matrix(m1)[, c(1, inc)] %*% t(X0) %>% as.data.frame()
@@ -111,6 +113,10 @@ sims <- sims %>%
   mutate(fd = as.numeric(fd)) %>%
   arrange(desc(fd)) %>%
   mutate(crime = factor(crime, levels = unique(crime)))
+
+# sims <- sims %>%
+#   group_by(crime) %>%
+#   sample_n(1000)
 
 
 
