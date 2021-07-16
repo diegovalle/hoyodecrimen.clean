@@ -114,11 +114,6 @@ sims <- sims %>%
   arrange(desc(fd)) %>%
   mutate(crime = factor(crime, levels = unique(crime)))
 
-# sims <- sims %>%
-#   group_by(crime) %>%
-#   sample_n(1000)
-
-
 
 p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
   geom_line(alpha = 0.1, aes(color = trend), size = .05) +
@@ -128,8 +123,8 @@ p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
              shape = 21,
              size = 1.1) +
   scale_color_manual("tendencia\núltimo mes",
-                     values = c("positive" = "#e41a1c", 
-                                "negative" = "#1f78b4"), 
+                     values = c("positive" = "#e41a1c",
+                                "negative" = "#1f78b4"),
                      labels = c("al alza", "a la baja", "no significativa"),
                      breaks = c("positive", "negative", NA),
                      na.value = "#cab2d6") +
