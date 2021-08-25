@@ -1,7 +1,7 @@
 
 print("Cleaning PGJ-CDMX data")
 # https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
-url <- paste0("http://archivo.datos.cdmx.gob.mx/carpetas_completa_junio_2021.csv")
+url <- paste0("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_julio_2021.csv")
 carpetas <- read_csv(url, col_types = cols(
   ao_hechos = col_double(),
   mes_hechos = col_character(),
