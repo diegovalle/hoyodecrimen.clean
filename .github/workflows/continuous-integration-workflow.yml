@@ -5,9 +5,9 @@ on: [push]
 jobs:
 
   build:
- 
+
     runs-on: ubuntu-latest
- 
+
     steps:
     - uses: actions/checkout@v1
     - name: Clean Data for HoyoDeCrimen
@@ -25,8 +25,8 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       if: failure()
       run: |
-          zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
-    - name: upload artifacts
+        zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+    - name: upload charts and RData files
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
