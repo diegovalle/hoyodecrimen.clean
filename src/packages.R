@@ -1,5 +1,7 @@
 if (Sys.getenv("CI") == "true") {
   install.packages("hrbrthemes", repos = "https://cinc.rud.is")
+  package = "https://cran.r-project.org/package=rjson&version=0.2.19"
+  utils::install.packages(pkgs = package, repos = NULL)
 }
 
 ## Auto-Install packages
