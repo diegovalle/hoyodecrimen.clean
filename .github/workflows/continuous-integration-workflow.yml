@@ -25,10 +25,25 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       if: failure()
       run: |
-          zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/* "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+          zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload artifacts
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
-      run: zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/* "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+      run: zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+    - name: upload csv artifacts
+      env:
+        ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}
+        APPLICATION_KEY: ${{  secrets.APPLICATION_KEY_HOYODECRIMEN }}
+        BUCKET_ID: ${{  secrets.BUCKET_ID_HOYODECRIMEN }}
+      run: |
+         find "$GITHUB_WORKSPACE"/clean-data/*.csv -type f -exec zip {}.zip {} \;
+        "$GITHUB_WORKSPACE"/upload_to_b2.sh "$GITHUB_WORKSPACE"/clean-data/crime-lat-long-pgj.csv.zip
+        "$GITHUB_WORKSPACE"/upload_to_b2.sh "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv.zip
+        "$GITHUB_WORKSPACE"/upload_to_b2.sh "$GITHUB_WORKSPACE"/clean-data/pgj.csv.zip
+      - name: Invalidate stale cache
+        run: |
+          curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+          curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+          curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
