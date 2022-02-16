@@ -1,8 +1,11 @@
 
 print("Cleaning PGJ-CDMX data")
 # https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
-url <- paste0("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_diciembre_2021.csv")
-carpetas <- read_csv(url, col_types = cols(
+url <- paste0("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_enero_2022.csv")
+tmp <- tempfile()
+download.file(destfile = tmp, url = url)
+
+carpetas <- read_csv(tmp, col_types = cols(
   ao_hechos = col_double(),
   mes_hechos = col_character(),
   fecha_hechos = col_datetime(format = ""),
@@ -18,7 +21,7 @@ carpetas <- read_csv(url, col_types = cols(
   calle_hechos2 = col_character(),
   colonia_hechos = col_character(),
   alcaldia_hechos = col_character(),
-  competencia = col_logical(),
+  competencia = col_character(),
   longitud = col_double(),
   latitud = col_double(),
   tempo = col_logical()
