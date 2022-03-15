@@ -44,7 +44,9 @@ jobs:
         zip cuadrantes-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh cuadrantes-pgj.csv.zip
         zip pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh pgj.csv.zip
     - name: Invalidate stale cache
+      env:
+        CACHE_INVALIDATE_HEADER: ${{ secrets.CACHE_INVALIDATE_HEADER }}
       run: |
-        curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
-        curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
-        curl -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+        curl --retry 10 -vvv -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+        curl --retry 10 -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+        curl --retry 10 -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
