@@ -1,7 +1,13 @@
 
 print("Cleaning PGJ-CDMX data")
-# https://archivo.datos.cdmx.gob.mx/carpetas_completa.csv
-url <- paste0("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_abril_2022.csv")
+## File available at:
+# https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
+
+page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
+                  warn = FALSE)
+page <- paste0(page, collapse = "")
+url <- str_extract(page, "https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_.*\\.csv")
+
 tmp <- tempfile()
 download.file(destfile = tmp, url = url)
 
