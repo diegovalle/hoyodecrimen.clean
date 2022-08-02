@@ -1,6 +1,12 @@
 name: Docker Image CI
 
-on: [push]
+on:
+  # curl -H "Accept: application/vnd.github+json" -H "Authorization: token <TOKEN>" --request POST --data '{"event_type": "deploy-website"}' https://api.github.com/repos/diegovalle/hoydecrimen.clean/dispatches 
+  repository_dispatch:
+    types: deploy-website
+  push:
+    branches:
+      - master
 
 jobs:
 
