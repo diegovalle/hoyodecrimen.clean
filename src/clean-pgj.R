@@ -9,9 +9,9 @@ page <- paste0(page, collapse = "")
 url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_.*\\.csv(?=")')
 
 tmp <- tempfile()
-download.file(destfile = tmp, url = url)
+#download.file(destfile = tmp, url = url)
 
-carpetas <- read_csv(tmp, col_types = cols(
+carpetas <- read_csv("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/apache_da_carpetas_agosto_2022.csv", col_types = cols(
   ao_hechos = col_double(),
   mes_hechos = col_character(),
   fecha_hechos = col_datetime(format = ""),
@@ -34,7 +34,8 @@ carpetas <- read_csv(tmp, col_types = cols(
 ))
 
 df <- carpetas
-# rename columns to standarize names
+
+# rename columns to standardize names
 df <- df %>% rename(Latitud = latitud,
               Longitud = longitud,
               Categoría.de.delito = categoria_delito,
@@ -42,6 +43,8 @@ df <- df %>% rename(Latitud = latitud,
               Año = ao_hechos,
               Mes = mes_hechos,
               Delito = delito)
+
+df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)
 
 df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
