@@ -4,6 +4,9 @@ if (Sys.getenv("CI") == "true") {
   utils::install.packages(pkgs = package, repos = NULL)
 }
 
+packageurl <- 'https://cran.rstudio.com/src/contrib/ggmap_3.0.0.tar.gz'
+install.packages(packageurl, repos=NULL, type="source")
+
 ## Auto-Install packages
 .packs <- c("gdata", "zoo", "testthat", "readr", "maptools",
             "ggplot2", "rgdal", "lubridate", "stringr",
