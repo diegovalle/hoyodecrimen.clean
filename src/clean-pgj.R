@@ -6,43 +6,68 @@ print("Cleaning PGJ-CDMX data")
 page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
                   warn = FALSE)
 page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_completa_.*\\.csv(?=")')
+url <- str_extract_all(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_[a-zA-Z_0-9]*\\.csv(?=")')
 
 tmp <- tempfile()
-#download.file(destfile = tmp, url = url)
+download.file(destfile = tmp, url = url[[1]][[length(url[[1]])]])
 
-carpetas <- read_csv("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/apache_da_carpetas_agosto_2022.csv", col_types = cols(
-  ao_hechos = col_double(),
+carpetas <- read_csv(tmp, col_types = cols(
+  ao_hechos = col_character(),
   mes_hechos = col_character(),
-  fecha_hechos = col_datetime(format = ""),
-  ao_inicio = col_double(),
+  fecha_hechos = col_date(format = ""),
+  hora_hechos = col_time(format = ""),
+  ao_inicio = col_character(),
   mes_inicio = col_character(),
-  fecha_inicio = col_datetime(format = ""),
+  fecha_inicio = col_date(format = ""),
+  hora_inicio = col_time(format = ""),
   delito = col_character(),
   fiscalia = col_character(),
   agencia = col_character(),
   unidad_investigacion = col_character(),
   categoria_delito = col_character(),
-  calle_hechos = col_character(),
-  calle_hechos2 = col_character(),
-  colonia_hechos = col_character(),
-  alcaldia_hechos = col_character(),
   competencia = col_character(),
+  alcaldia_hechos = col_character(),
+  municipio_hechos = col_character(),
+  colonia_datos = col_character(),
+  fgj_colonia_registro = col_character(),
   longitud = col_double(),
-  latitud = col_double(),
-  tempo = col_logical()
+  latitud = col_double()
 ))
 
-df <- carpetas
+df <- bind_rows(read_csv("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_2019-2021.csv", 
+                         col_types = cols(
+                           ao_hechos = col_character(),
+                           mes_hechos = col_character(),
+                           fecha_hechos = col_date(format = ""),
+                           hora_hechos = col_time(format = ""),
+                           ao_inicio = col_character(),
+                           mes_inicio = col_character(),
+                           fecha_inicio = col_date(format = ""),
+                           hora_inicio = col_time(format = ""),
+                           delito = col_character(),
+                           fiscalia = col_character(),
+                           agencia = col_character(),
+                           unidad_investigacion = col_character(),
+                           categoria_delito = col_character(),
+                           competencia = col_character(),
+                           alcaldia_hechos = col_character(),
+                           municipio_hechos = col_character(),
+                           colonia_datos = col_character(),
+                           fgj_colonia_registro = col_character(),
+                           longitud = col_double(),
+                           latitud = col_double()
+                         )),
+                carpetas)
 
 # rename columns to standardize names
 df <- df %>% rename(Latitud = latitud,
-              Longitud = longitud,
+                    Longitud = longitud,
               Categoría.de.delito = categoria_delito,
               fecha_hechos = fecha_hechos,
               Año = ao_hechos,
               Mes = mes_hechos,
               Delito = delito)
+df$Año <- year(df$fecha_hechos)
 
 df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)
 
