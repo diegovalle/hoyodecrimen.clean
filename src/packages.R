@@ -4,7 +4,7 @@ if (Sys.getenv("CI") == "true") {
   utils::install.packages(pkgs = package, repos = NULL)
 }
 
-packageurl <- 'https://cran.rstudio.com/src/contrib/ggmap_3.0.0.tar.gz'
+packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-05/src/contrib/ggmap_3.0.0.tar.gz'
 install.packages(packageurl, repos=NULL, type="source")
 
 ## Auto-Install packages
