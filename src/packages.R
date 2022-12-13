@@ -5,11 +5,11 @@ if (Sys.getenv("CI") == "true") {
 }
 
 
+packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-14/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
+install.packages(packageurl, repos=NULL, type="source")
 packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-14/src/contrib/cli_2.0.2.tar.gz'
 install.packages(packageurl, repos=NULL, type="source")
 packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-05/src/contrib/ggmap_3.0.0.tar.gz'
-install.packages(packageurl, repos=NULL, type="source")
-packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-14/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
 install.packages(packageurl, repos=NULL, type="source")
 
 ## Auto-Install packages
