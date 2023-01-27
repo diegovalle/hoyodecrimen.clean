@@ -4,6 +4,8 @@
 set -euo pipefail #exit on error, undefined and prevent pipeline errors
 IFS=$'\n\t'
 URL="https://data.diegovalle.net/hoyodecrimen"
+TMPDIR="$RUNNER_TEMP"
+
 
 wget -N $URL/crime-lat-long-pgj.csv.zip $URL/cuadrantes-pgj.csv.zip $URL/pgj.csv.zip -P "$TMPDIR"
 (cd "$TMPDIR" && unzip -o -d "$TMPDIR/$(date +%Y-%m)" -j '*csv.zip')
