@@ -56,3 +56,9 @@ jobs:
         curl --retry 10 -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
         curl --retry 10 -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
         curl --retry 10 -o /dev/null -v https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
+    - name: Update database
+      env:
+        CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
+        SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
+      run: |
+        "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"
