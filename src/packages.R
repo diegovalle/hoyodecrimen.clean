@@ -1,4 +1,8 @@
 if (Sys.getenv("CI") == "true") {
+  inst_package <- function(packageurl) {
+    install.packages(packageurl, repos=NULL, type="source")
+  }
+  
   install.packages("hrbrthemes", repos = "https://cinc.rud.is")
   package = "https://cran.r-project.org/package=rjson&version=0.2.19"
   utils::install.packages(pkgs = package, repos = NULL)
@@ -24,10 +28,6 @@ if (Sys.getenv("CI") == "true") {
   }, 
   error = function(x) {inst_package(packageurl)}
   )
-}
-
-inst_package <- function(packageurl) {
-  install.packages(packageurl, repos=NULL, type="source")
 }
 
 
