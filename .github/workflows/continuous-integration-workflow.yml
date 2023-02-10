@@ -1,7 +1,7 @@
 name: Docker Image CI
 
 on:
-  # curl -H "Accept: application/vnd.github+json" -H "Authorization: token <TOKEN>" --request POST --data '{"event_type": "deploy-website"}' https://api.github.com/repos/diegovalle/hoydecrimen.clean/dispatches 
+  # curl -H "Accept: application/vnd.github+json" -H "Authorization: token <TOKEN>" --request POST --data '{"event_type": "deploy-website"}' https://api.github.com/repos/diegovalle/hoydecrimen.clean/dispatches
   repository_dispatch:
     types: deploy-website
   push:
@@ -39,7 +39,7 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       run: |
         zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
-    - name: upload csv artifacts
+    - name: upload csv files to b2
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY_HOYODECRIMEN }}

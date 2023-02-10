@@ -2,15 +2,34 @@ if (Sys.getenv("CI") == "true") {
   install.packages("hrbrthemes", repos = "https://cinc.rud.is")
   package = "https://cran.r-project.org/package=rjson&version=0.2.19"
   utils::install.packages(pkgs = package, repos = NULL)
+  
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
+    if (packageVersion("RgoogleMaps") != "1.4.5.3") {
+      inst_package(packageurl)}
+  }, 
+  error = function(x) {inst_package(packageurl)}
+  )
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_2.0.2.tar.gz'
+    if (packageVersion("RgoogleMaps") != "2.0.2") {
+      inst_package(packageurl)}
+  }, 
+  error = function(x) {inst_package(packageurl)}
+  )
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
+    if (packageVersion("RgoogleMaps") != "3.0.0") {
+      inst_package(packageurl)}
+  }, 
+  error = function(x) {inst_package(packageurl)}
+  )
 }
 
+inst_package <- function(packageurl) {
+  install.packages(packageurl, repos=NULL, type="source")
+}
 
-packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-14/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
-install.packages(packageurl, repos=NULL, type="source")
-packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-14/src/contrib/cli_2.0.2.tar.gz'
-install.packages(packageurl, repos=NULL, type="source")
-packageurl <- 'https://mran.microsoft.com/snapshot/2020-09-05/src/contrib/ggmap_3.0.0.tar.gz'
-install.packages(packageurl, repos=NULL, type="source")
 
 ## Auto-Install packages
 .packs <- c("gdata", "zoo", "testthat", "readr", "maptools",
