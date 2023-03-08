@@ -61,4 +61,6 @@ jobs:
         CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
         SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
       run: |
+        sudo apt-get install -y spiped
+        ls -la /dev/shm
         "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"

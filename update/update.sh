@@ -17,4 +17,4 @@ psql -d "$1" -c "VACUUM ANALYZE cuadrantes;"
 psql -d "$1" -c "VACUUM ANALYZE pgj;"
 
 curl -X POST -d "CACHE_SECRET=$2" https://hoyodecrimen.com/clear-cache
-xargs -I % wget -q --show-progress --wait=14 --tries=3 -O /dev/null https://hoyodecrimen.com% < "$GITHUB_WORKSPACE"/update/urllist.txt
+(xargs -I % wget -q --show-progress --wait=14 --tries=3 -O /dev/null https://hoyodecrimen.com% < "$GITHUB_WORKSPACE"/update/urllist.txt) || true
