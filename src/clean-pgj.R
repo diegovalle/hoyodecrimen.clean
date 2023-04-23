@@ -1,4 +1,3 @@
-
 print("Cleaning PGJ-CDMX data")
 ## File available at:
 # https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
