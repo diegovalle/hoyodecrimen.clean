@@ -8,7 +8,7 @@ page <- paste0(page, collapse = "")
 url <- str_extract_all(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_[a-zA-Z_0-9]*\\.csv(?=")')
 
 tmp <- tempfile()
-download.file(destfile = tmp, url = url[[1]][[length(url[[1]])]])
+download.file(destfile = tmp, url = "https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_2022-2023.csv")
 
 carpetas <- read_csv(tmp, col_types = cols(
   ao_hechos = col_character(),
@@ -310,8 +310,9 @@ df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16,
 
 df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "Ymd H:M:S")
 
-expect_true(all(str_detect(df$fecha_hechos2,
-                           "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
+expect_true(all(str_detect(
+  format(df$fecha_hechos2, "%Y-%m-%d %H:%M:%S"),
+  "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
 expect_true(max(df$fecha_hechos2) < Sys.Date())
 
 expect_identical(df$Año, year(df$fecha_hechos2))
