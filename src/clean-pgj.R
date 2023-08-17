@@ -5,58 +5,44 @@ print("Cleaning PGJ-CDMX data")
 page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
                   warn = FALSE)
 page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_[a-zA-Z_0-9]*\\.csv(?=")')
+url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_[a-zA-Z_0-9]*_[0-9]*\\.csv(?=")')
 
 tmp <- tempfile()
 download.file(destfile = tmp, url = url)
 
-carpetas <- read_csv(tmp, col_types = cols(
-  ao_hechos = col_character(),
-  mes_hechos = col_character(),
-  fecha_hechos = col_date(format = ""),
-  hora_hechos = col_time(format = ""),
-  ao_inicio = col_character(),
-  mes_inicio = col_character(),
-  fecha_inicio = col_date(format = ""),
-  hora_inicio = col_time(format = ""),
+
+carpetas_latest <- read_csv(tmp, col_types = cols(
+  anio_hecho = col_character(),
+  mes_hecho = col_character(),
+  fecha_hecho = col_date(format = ""),
+  hora_hecho = col_time(format = ""),
   delito = col_character(),
+  categoria = col_character(),
+  competencia = col_character(),
   fiscalia = col_character(),
   agencia = col_character(),
   unidad_investigacion = col_character(),
-  categoria_delito = col_character(),
-  competencia = col_character(),
-  alcaldia_hechos = col_character(),
-  municipio_hechos = col_character(),
-  colonia_datos = col_character(),
-  fgj_colonia_registro = col_character(),
-  longitud = col_double(),
-  latitud = col_double()
+  anio_inicio = col_double(),
+  mes_inicio = col_character(),
+  fecha_inicio = col_date(format = ""),
+  hora_inicio = col_time(format = ""),
+  colonia_catalogo = col_character(),
+  colonia_hecho = col_character(),
+  alcaldia_hecho = col_character(),
+  municipio_hecho = col_character(),
+  latitud = col_double(),
+  longitud = col_double()
 ))
+carpetas_latest <- carpetas_latest %>% rename(
+  categoria_delito = categoria,
+  fecha_hechos = fecha_hecho,
+  ao_hechos = anio_hecho,
+  hora_hechos = hora_hecho,
+  mes_hechos = mes_hecho)
 
-df <- bind_rows(read_csv("https://archivo.datos.cdmx.gob.mx/fiscalia-general-de-justicia/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico/carpetas_2019-2021.csv", 
-                         col_types = cols(
-                           ao_hechos = col_character(),
-                           mes_hechos = col_character(),
-                           fecha_hechos = col_date(format = ""),
-                           hora_hechos = col_time(format = ""),
-                           ao_inicio = col_character(),
-                           mes_inicio = col_character(),
-                           fecha_inicio = col_date(format = ""),
-                           hora_inicio = col_time(format = ""),
-                           delito = col_character(),
-                           fiscalia = col_character(),
-                           agencia = col_character(),
-                           unidad_investigacion = col_character(),
-                           categoria_delito = col_character(),
-                           competencia = col_character(),
-                           alcaldia_hechos = col_character(),
-                           municipio_hechos = col_character(),
-                           colonia_datos = col_character(),
-                           fgj_colonia_registro = col_character(),
-                           longitud = col_double(),
-                           latitud = col_double()
-                         )),
-                carpetas)
+
+carpetas_latest <- filter(carpetas_latest, ao_hechos >= 2019)
+df <- carpetas_latest
 
 # rename columns to standardize names
 df <- df %>% rename(Latitud = latitud,
@@ -66,7 +52,7 @@ df <- df %>% rename(Latitud = latitud,
               Año = ao_hechos,
               Mes = mes_hechos,
               Delito = delito)
-df$Año <- year(df$fecha_hechos)
+df$Año <- year(as.Date(df$fecha_hechos))
 
 df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)
 
@@ -298,15 +284,18 @@ df$fecha_hechos <- str_replace_all(df$fecha_hechos,
 #which(!str_detect(df$fecha_hechos, "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}"))
 df$fecha_hechos <- str_replace_all(df$fecha_hechos, "T|Z", " ")
 #df$fecha_hechos <- str_c(df$fecha_hechos, " ", df$HoraHecho)
-df <- df[!is.na(df$fecha_hechos), ]
+#df <- df[!is.na(df$fecha_hechos), ]
 #df$fecha_hechos <- as.character(parse_date_time(df$fecha_hechos, "ymd HMS"))
+
+# FIXME
+df <- df[!is.na(df$hora_hechos), ]
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
 
 # add missing seconds to fecha_hechos
-df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16, 
-        paste0(df$fecha_hechos, ":00"), 
-        df$fecha_hechos)
+#df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16, 
+#        paste0(df$fecha_hechos, ":00"), 
+#        df$fecha_hechos)
 
 df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "Ymd H:M:S")
 
