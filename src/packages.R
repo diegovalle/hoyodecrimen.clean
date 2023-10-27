@@ -28,6 +28,15 @@ if (Sys.getenv("CI") == "true") {
   }, 
   error = function(x) {inst_package(packageurl)}
   )
+  
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz'
+    if (packageVersion("RgoogleMaps") != "3.0.0") {
+      inst_package(packageurl)}
+  }, 
+  error = function(x) {inst_package(packageurl)}
+  )
+  
 }
 
 
