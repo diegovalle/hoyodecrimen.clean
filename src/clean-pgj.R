@@ -303,19 +303,15 @@ expect_true(all(str_detect(df$fecha_hechos,
 #df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16, 
 #        paste0(df$fecha_hechos, ":00"), 
 #        df$fecha_hechos)
-print("parse_date_time(df$fecha_hechos, ")
 df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "Ymd H:M:S")
 
-print("format(df$fecha_hechos2")
 expect_true(all(str_detect(
   format(df$fecha_hechos2, "%Y-%m-%d %H:%M:%S"),
   "\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2}")))
 expect_true(max(df$fecha_hechos2) < Sys.Date())
 
-print("year(df$fecha_hechos2)")
 expect_identical(df$Año, year(df$fecha_hechos2))
 df <- filter(df, Mes != "data")
-print("month(df$fecha_hechos2")
 expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
              str_replace_all(df$Mes,
                              c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
@@ -331,8 +327,10 @@ expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 expect_true(all(str_detect(
   as.Date(na_dates$fecha_hechos),
   "\\d{4}-\\d{2}-\\d{2}")))
+print("  as.Date(na_dates$fecha_hechos) ")
 na_dates$fecha_hechos2 <- as.Date(na_dates$fecha_hechos)
 na_dates$Mes.y.año <- format(as.Date(na_dates$fecha_hechos), "%Y-%m")
+print("  bind_rows ")
 df <- bind_rows(df, na_dates)
 
 ### File for the database
@@ -379,6 +377,7 @@ extra_homicide <- data.frame(
   long=-99.22941787182792,
   id=999999999
 )
+print("   fast_strptime ")
 df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
                               format = c("%Y-%m-%d %H:%M:%S",
