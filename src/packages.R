@@ -30,8 +30,10 @@ if (Sys.getenv("CI") == "true") {
   )
   
   tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz'
-    inst_package(packageurl)}
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
+    if (packageVersion("rgdal") != "1.5.28") {
+      inst_package(packageurl)}
+  }, 
     error = function(x) {inst_package(packageurl)}
   )
   
