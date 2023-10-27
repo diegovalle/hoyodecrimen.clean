@@ -28,7 +28,13 @@ if (Sys.getenv("CI") == "true") {
   }, 
   error = function(x) {inst_package(packageurl)}
   )
-  
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/lubridate/lubridate_1.9.2.tar.gz'
+    if (packageVersion("rgdal") != "1.9.2") {
+      inst_package(packageurl)}
+  }, 
+  error = function(x) {inst_package(packageurl)}
+  )
   tryCatch({
     packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
     if (packageVersion("rgdal") != "1.5.28") {

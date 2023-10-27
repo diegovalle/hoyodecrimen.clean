@@ -379,7 +379,7 @@ df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
                               format = c("%Y-%m-%d %H:%M:%S",
                                          "%Y-%m-%d"),
-                              lt = FALSE)) %>%
+                              lt = TRUE)) %>%
   #mutate(date = force_tz(date, "America/Mexico_City")) %>%
   #mutate(hour = as.character(format(date, "%H:%M"))) %>%
   mutate(hour = as.character(hora_hechos)) %>%
