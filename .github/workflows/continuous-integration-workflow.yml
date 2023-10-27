@@ -31,14 +31,14 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       if: failure()
       run: |
-        zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload charts and RData files
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       run: |
-        zip hoyodecrimen-clean.zip "$GITHUB_WORKSPACE"/clean-data/*.RData "$GITHUB_WORKSPACE"/graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload csv files to b2
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}
@@ -46,9 +46,9 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID_HOYODECRIMEN }}
       run: |
         echo "Uploading to B2"
-        zip crime-lat-long-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/crime-lat-long-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh crime-lat-long-pgj.csv.zip
-        zip cuadrantes-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh cuadrantes-pgj.csv.zip
-        zip pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh pgj.csv.zip
+        zip -j crime-lat-long-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/crime-lat-long-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh crime-lat-long-pgj.csv.zip
+        zip -j cuadrantes-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh cuadrantes-pgj.csv.zip
+        zip -j pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh pgj.csv.zip
     - name: Invalidate stale cache
       env:
         CACHE_INVALIDATE_HEADER: ${{ secrets.CACHE_INVALIDATE_HEADER }}
