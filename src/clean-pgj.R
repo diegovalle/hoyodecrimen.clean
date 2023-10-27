@@ -324,12 +324,11 @@ df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 
 expect_true(all(str_detect(
-  as.Date(na_dates$fecha_hechos),
+  as.POSIXct(na_dates$fecha_hechos, tz = tz(df$fecha_hechos2)),
   "\\d{4}-\\d{2}-\\d{2}")))
-na_dates$fecha_hechos2 <- as.Date(na_dates$fecha_hechos)
+na_dates$fecha_hechos2 <- as.POSIXct(na_dates$fecha_hechos, tz = tz(df$fecha_hechos2))
 na_dates$Mes.y.año <- format(as.Date(na_dates$fecha_hechos), "%Y-%m")
 df <- bind_rows(df, na_dates)
-print("testa")
 ### File for the database
 
 cuadrantes <- df
@@ -375,12 +374,6 @@ extra_homicide <- data.frame(
   id=999999999
 )
 
-print("test")
-fast_strptime(as.character(df$fecha_hechos2),
-              format = c("%Y-%m-%d %H:%M:%S",
-                         "%Y-%m-%d"),
-              lt = FALSE)
-print("   fast_strptime ")
 df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
                               format = c("%Y-%m-%d %H:%M:%S",
