@@ -5,7 +5,7 @@ print("Cleaning PGJ-CDMX data")
 page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
                   warn = FALSE)
 page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_[a-zA-Z_0-9]*_[0-9]*\\.csv(?=")')
+url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_[a-zA-Z_0-9]{4}_[0-9]{2}\\.csv(?=")')
 
 tmp <- tempfile()
 download.file(destfile = tmp, url = url)
@@ -288,7 +288,14 @@ df$fecha_hechos <- str_replace_all(df$fecha_hechos, "T|Z", " ")
 #df$fecha_hechos <- as.character(parse_date_time(df$fecha_hechos, "ymd HMS"))
 
 # FIXME
+na_dates <- df[is.na(df$hora_hechos), ]
+#df[is.na(df$hora_hechos), ]$hora_hechos <- df[is.na(df$hora_hechos), ]$hora_inicio
+#df[is.na(df$hora_hechos), ]$hora_hechos <- "00:00"
 df <- df[!is.na(df$hora_hechos), ]
+
+df$fecha_hechos <- paste(str_sub(df$fecha_hechos, 1, 10), 
+                          df$hora_hechos)
+
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
 
@@ -316,8 +323,13 @@ expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
 
 df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
-#df$fecha_hechos2 <- df$fecha_hechos2 %>% 
-#  with_tz("America/Mexico_City")
+
+expect_true(all(str_detect(
+  as.Date(na_dates$fecha_hechos),
+  "\\d{4}-\\d{2}-\\d{2}")))
+na_dates$fecha_hechos2 <- as.Date(na_dates$fecha_hechos)
+na_dates$Mes.y.año <- format(as.Date(na_dates$fecha_hechos), "%Y-%m")
+df <- bind_rows(df, na_dates)
 
 ### File for the database
 
@@ -352,19 +364,31 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
 
 
 ### File for the cartodb map visualization
-
-
+extra_homicide <- data.frame(
+  cuadrante="S-3.6.7",
+  crime="HOMICIDIO DOLOSO",
+  date="2023-02-23",
+  hour=NA,
+  year=2023,
+  month=2,
+  lat=19.266600098223492, 
+  long=-99.22941787182792,
+  id=999999999
+)
 df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
-                              format = "%Y-%m-%d %H:%M:%S",
+                              format = c("%Y-%m-%d %H:%M:%S",
+                                         "%Y-%m-%d"),
                               lt = FALSE)) %>%
-  mutate(date = force_tz(date, "America/Mexico_City")) %>%
-  mutate(hour = as.character(format(date, "%H:%M"))) %>%
+  #mutate(date = force_tz(date, "America/Mexico_City")) %>%
+  #mutate(hour = as.character(format(date, "%H:%M"))) %>%
+  mutate(hour = as.character(hora_hechos)) %>%
   mutate(year = year(date)) %>%
   mutate(month = month(date)) %>%
   mutate(date = as.character(format(date, "%Y-%m-%d"))) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
   select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
+  rbind(extra_homicide) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
 
 ## Sometimes there are problems with the timezone in the data
