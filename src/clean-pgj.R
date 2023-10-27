@@ -320,19 +320,16 @@ expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
                                "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
 )
 
-print(" format(as.Date(df$fecha_hechos2), ")
 df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
 expect_true(all(str_detect(df$Mes.y.año, "\\d{4}-\\d{2}")))
 
 expect_true(all(str_detect(
   as.Date(na_dates$fecha_hechos),
   "\\d{4}-\\d{2}-\\d{2}")))
-print("  as.Date(na_dates$fecha_hechos) ")
 na_dates$fecha_hechos2 <- as.Date(na_dates$fecha_hechos)
 na_dates$Mes.y.año <- format(as.Date(na_dates$fecha_hechos), "%Y-%m")
-print("  bind_rows ")
 df <- bind_rows(df, na_dates)
-
+print("testa")
 ### File for the database
 
 cuadrantes <- df
@@ -377,12 +374,18 @@ extra_homicide <- data.frame(
   long=-99.22941787182792,
   id=999999999
 )
+
+print("test")
+fast_strptime(as.character(df$fecha_hechos2),
+              format = c("%Y-%m-%d %H:%M:%S",
+                         "%Y-%m-%d"),
+              lt = FALSE)
 print("   fast_strptime ")
 df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
                               format = c("%Y-%m-%d %H:%M:%S",
                                          "%Y-%m-%d"),
-                              lt = TRUE)) %>%
+                              lt = FALSE)) %>%
   #mutate(date = force_tz(date, "America/Mexico_City")) %>%
   #mutate(hour = as.character(format(date, "%H:%M"))) %>%
   mutate(hour = as.character(hora_hechos)) %>%
