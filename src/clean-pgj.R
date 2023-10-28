@@ -370,8 +370,7 @@ extra_homicide <- data.frame(
   year=2023,
   month=2,
   lat=19.266600098223492, 
-  long=-99.22941787182792,
-  id=999999999
+  long=-99.22941787182792
 )
 
 df %>%
@@ -386,8 +385,9 @@ df %>%
   mutate(month = month(date)) %>%
   mutate(date = as.character(format(date, "%Y-%m-%d"))) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
-  select(cuadrante, crime, date, hour, year, month, lat, long, id) %>%
+  select(cuadrante, crime, date, hour, year, month, lat, long) %>%
   rbind(extra_homicide) %>%
+  mutate(id = row_number()) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
 
 ## Sometimes there are problems with the timezone in the data
