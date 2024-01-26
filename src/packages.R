@@ -22,7 +22,7 @@ if (Sys.getenv("CI") == "true") {
   error = function(x) {inst_package(packageurl)}
   )
   tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/ggmap_4.0.0.tar.gz'
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
     if (packageVersion("RgoogleMaps") != "3.0.0") {
       inst_package(packageurl)}
   }, 
