@@ -15,9 +15,9 @@ main <- function() {
   source(file.path("src", "sesnsp.R"))
   # Analysis
   source(file.path("src", "gam.R"))
-  register_stadiamaps(Sys.getenv("STADIA_KEY"), write = FALSE)
-  source(file.path("src", "pointdensity.R"))
-  source(file.path("src", "pointdensity_dates.R"))
+  #register_stadiamaps(Sys.getenv("STADIA_KEY"), write = FALSE)
+  #source(file.path("src", "pointdensity.R"))
+  #source(file.path("src", "pointdensity_dates.R"))
   source(file.path("src", "multilevel_gam.R"))
 }
 main()
