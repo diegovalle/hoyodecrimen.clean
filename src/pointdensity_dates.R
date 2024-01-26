@@ -39,7 +39,7 @@ plot_density_dates <- function(crime, ll) {
   ll$density <- subset(ll$density, lon != 0)
   breaks <- get_breaks(ll)
   qmplot(lon, lat, data =  ll[["density"]], geom = "blank",
-         zoom = 11, maptype = "terrain", darken = .5, legend = "topleft") +
+         zoom = 11, maptype = "stamen_terrain", darken = .5, legend = "topleft") +
     geom_point(aes(x = lon, y = lat, colour = dateavg), shape = 19, size = 1,
                data =  ll[["density"]]) +
     scale_color_distiller("average\ndate",

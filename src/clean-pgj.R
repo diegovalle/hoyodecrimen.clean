@@ -5,7 +5,7 @@ print("Cleaning PGJ-CDMX data")
 page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
                   warn = FALSE)
 page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_[a-zA-Z_0-9]{4}_[0-9]{2}\\.csv(?=")')
+url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ.*\\.csv(?=")')
 
 tmp <- tempfile()
 download.file(destfile = tmp, url = url)
@@ -34,7 +34,7 @@ carpetas_latest <- read_csv(tmp, col_types = cols(
   longitud = col_double()
 ))
 carpetas_latest <- carpetas_latest %>% rename(
-  categoria_delito = categoria,
+  categoria_delito = categoria_delito,
   fecha_hechos = fecha_hecho,
   ao_hechos = anio_hecho,
   hora_hechos = hora_hecho,

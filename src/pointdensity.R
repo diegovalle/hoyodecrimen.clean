@@ -23,13 +23,13 @@ density_chart <- function(crime, ll) {
   density_title <- str_c("Point density of ",
                          crime,
                          " counts in CDMX with a 1 km",
-                         " radius (",
+                         " radius\n(",
                          format(as.Date(ll[["start"]]), "%b %Y"),
                          " - ",
                          format(as.Date(ll[["end"]]), "%b %Y"),
                          ")")
   qmplot(lon, lat, data = ll[["density"]], geom = "blank",
-         zoom = 11, maptype = "terrain", darken = .4, legend = "topleft") +
+         zoom = 11, maptype = "stamen_terrain", darken = .4, legend = "topleft") +
     geom_point(aes(x = lon, y = lat, colour = count), shape = 19, size = 2,
                data = ll[["density"]]) +
     scale_color_viridis(option = "inferno") +
