@@ -14,13 +14,13 @@ if (Sys.getenv("CI") == "true") {
   # }, 
   # error = function(x) {inst_package(packageurl)}
   # )
-  # tryCatch({
-  #   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_2.0.2.tar.gz'
-  #   if (packageVersion("RgoogleMaps") != "2.0.2") {
-  #     inst_package(packageurl)}
-  # }, 
-  # error = function(x) {inst_package(packageurl)}
-  # )
+  tryCatch({
+    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_3.6.1.tar.gz'
+    if (packageVersion("RgoogleMaps") != "2.0.2") {
+      inst_package(packageurl)}
+  },
+  error = function(x) {inst_package(packageurl)}
+  )
   # tryCatch({
   #   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
   #   if (packageVersion("RgoogleMaps") != "3.0.0") {
