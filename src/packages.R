@@ -7,27 +7,27 @@ if (Sys.getenv("CI") == "true") {
   package = "https://cran.r-project.org/package=rjson&version=0.2.19"
   utils::install.packages(pkgs = package, repos = NULL)
   
-  tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
-    if (packageVersion("RgoogleMaps") != "1.4.5.3") {
-      inst_package(packageurl)}
-  }, 
-  error = function(x) {inst_package(packageurl)}
-  )
-  tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_2.0.2.tar.gz'
-    if (packageVersion("RgoogleMaps") != "2.0.2") {
-      inst_package(packageurl)}
-  }, 
-  error = function(x) {inst_package(packageurl)}
-  )
-  tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
-    if (packageVersion("RgoogleMaps") != "3.0.0") {
-      inst_package(packageurl)}
-  }, 
-  error = function(x) {inst_package(packageurl)}
-  )
+  # tryCatch({
+  #   packageurl <- 'https://cran.r-project.org/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
+  #   if (packageVersion("RgoogleMaps") != "1.4.5.3") {
+  #     inst_package(packageurl)}
+  # }, 
+  # error = function(x) {inst_package(packageurl)}
+  # )
+  # tryCatch({
+  #   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_2.0.2.tar.gz'
+  #   if (packageVersion("RgoogleMaps") != "2.0.2") {
+  #     inst_package(packageurl)}
+  # }, 
+  # error = function(x) {inst_package(packageurl)}
+  # )
+  # tryCatch({
+  #   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
+  #   if (packageVersion("RgoogleMaps") != "3.0.0") {
+  #     inst_package(packageurl)}
+  # }, 
+  # error = function(x) {inst_package(packageurl)}
+  # )
   tryCatch({
     packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
     if (packageVersion("rgdal") != "1.5.28") {
