@@ -141,3 +141,21 @@ p <- ggplot(sims, aes(x = date, y = expm1(rate), group = sim)) +
 ggsave("graphs/trends.png", height = 14, width = 14, dpi = 100)
 
 
+
+
+a=sims  %>%
+  group_by(crime, date)  %>%
+  summarise(l = quantile(expm1(rate), .05),
+            m = quantile(expm1(rate), .5),
+            u = quantile(expm1(rate), .95),
+            r = n[1],
+            trend = trend[1])
+jsondata <- lapply(as.character(unique(sims$crime)), function(x) {
+  crime_name <- x
+  crime <- filter(a, crime == x)
+  ll <- as.matrix(t(crime[, c("l", "m", "u", "r")]))
+  ll <- round(ll, 1)
+  ll <- lst(!!crime_name := ll, trend = crime$trend[1])
+  return(ll)
+})
+write(toJSON(jsondata), "clean-data/json/crime_trends.json")

@@ -45,7 +45,7 @@ if (Sys.getenv("CI") == "true") {
             "foreign", "jsonlite", "xtable", "dplyr", "tidyr",
             "rgeos", "maps", "sp", "tidyr", "pointdensityP",
             "ggmap", "mgcv", "viridis", "spdep", "ggrepel",
-            "tufte", "parallel", "mapproj", "cli")
+            "tufte", "parallel", "mapproj", "cli", "geojsonio")
 .success <- suppressPackageStartupMessages(
   suppressWarnings(sapply(.packs, require, character.only = TRUE))
 )

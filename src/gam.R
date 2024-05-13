@@ -10,6 +10,8 @@ read_cdmx_map <- function() {
                         use_iconv = TRUE,
                         verbose = FALSE)
   )
+  # cuad_map@data$Sector2 <- cuad_map@data$Sector
+  # cuad_map@data$Sector_hoy <- cuad_map@data$Sector
   cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEA"),
                 "Sector_hoy"] <- "TAXQUEÑA"
   cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEA"),
@@ -208,6 +210,15 @@ ll <- gam_crime_last_year("HOMICIDIO DOLOSO", cuad_map, k = k)
 p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 ggsave("graphs/cdmx-smooth-latest-HOMICIDIO.png", 
        plot = p, dpi = 100, width = 10, height = 13)
+
+write(list(ll[["hom"]] %>%
+             select( c("Nomenclatu", "rate", "pred_rate")) %>%
+             mutate(rate = round(rate, 1),
+                    pred_rate = round(pred_rate, 1)) %>%
+             arrange(Nomenclatu) , 
+           ll["start"], ll["end"]) %>%
+        toJSON(dataframe = c("columns")),
+      "clean-data/json/smooth-map.json")
 
 # ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.", cuad_map, k = k)
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])

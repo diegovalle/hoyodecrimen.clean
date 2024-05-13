@@ -32,13 +32,13 @@ jobs:
       if: failure()
       run: |
         cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
-    - name: upload charts and RData files
+    - name: upload charts, json and RData files
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       run: |
-        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* clean-data/json/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload csv files to b2
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}
@@ -64,3 +64,12 @@ jobs:
         sudo apt-get install -y spiped
         ls -la /dev/shm
         "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"
+    - nmae: Convert geojson to pmtiles
+      run: |
+        git clone https://github.com/mapbox/tippecanoe.git
+        cd tippecanoe
+        make -j
+        sudo make install 
+        curl -L https://github.com/protomaps/go-pmtiles/releases/download/v1.19.1/go-pmtiles_1.19.1_Linux_x86_64.tar.gz | sudo tar xvf -C /bin
+        tippecanoe --force -r1 -Z12 -z12 -o "$GITHUB_WORKSPACE"clean-data/json/homicides.mbtiles -l crime-lat-long-pgj -n "crime-lat-long-pgj" "$GITHUB_WORKSPACE"/clean-data/json/homicides.geojson
+        pmtiles convert "$GITHUB_WORKSPACE"/clean-data/json/homicides.mbtiles "$GITHUB_WORKSPACE"/clean-data/json/homicides.pmtiles
