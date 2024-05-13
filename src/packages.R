@@ -3,7 +3,7 @@ if (Sys.getenv("CI") == "true") {
     install.packages(packageurl, repos=NULL, type="source")
   }
   
-  install.packages("hrbrthemes", repos = "https://cinc.rud.is")
+  install.packages("https://cran.r-project.org/package=hrbrthemes&version=0.8.7", repos = NULL)
   package = "https://cran.r-project.org/package=rjson&version=0.2.19"
   utils::install.packages(pkgs = package, repos = NULL)
   
