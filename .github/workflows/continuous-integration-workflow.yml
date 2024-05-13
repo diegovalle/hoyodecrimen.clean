@@ -64,7 +64,7 @@ jobs:
         sudo apt-get install -y spiped
         ls -la /dev/shm
         "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"
-    - nama: Convert geojson to pmtiles
+    - name: Convert geojson to pmtiles
       run: |
         git clone https://github.com/mapbox/tippecanoe.git
         cd tippecanoe
