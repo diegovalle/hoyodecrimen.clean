@@ -26,5 +26,5 @@ clean-data/*/*.pmtiles
 clean-data/*/*.json
 data/colonias/
 old-ssp-data/
-renv/
+renv/library/*
 report/
