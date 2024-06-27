@@ -18,6 +18,8 @@ campaign
 
 
 clean-data/json/crime_trends.json
+clean-data/*.geojson
+clean-data/*.pmtiles
 clean-data/*/*.geojson
 clean-data/*/*.mbtiles
 clean-data/*/*.pmtiles
