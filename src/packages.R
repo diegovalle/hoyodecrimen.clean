@@ -2,57 +2,72 @@ if (Sys.getenv("CI") == "true") {
   inst_package <- function(packageurl) {
     install.packages(packageurl, repos=NULL, type="source")
   }
-  
-  install.packages("https://cran.r-project.org/package=hrbrthemes&version=0.8.7", repos = NULL)
-  package = "https://cran.r-project.org/package=rjson&version=0.2.19"
-  utils::install.packages(pkgs = package, repos = NULL)
-  
-  # tryCatch({
-  #   packageurl <- 'https://cran.r-project.org/src/contrib/RgoogleMaps_1.4.5.3.tar.gz'
-  #   if (packageVersion("RgoogleMaps") != "1.4.5.3") {
-  #     inst_package(packageurl)}
-  # }, 
-  # error = function(x) {inst_package(packageurl)}
-  # )
-  tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/cli/cli_3.6.1.tar.gz'
-    if (packageVersion("RgoogleMaps") != "2.0.2") {
-      inst_package(packageurl)}
-  },
-  error = function(x) {inst_package(packageurl)}
-  )
-  # tryCatch({
-  #   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/ggmap/ggmap_3.0.0.tar.gz'
-  #   if (packageVersion("RgoogleMaps") != "3.0.0") {
-  #     inst_package(packageurl)}
-  # }, 
-  # error = function(x) {inst_package(packageurl)}
-  # )
-  tryCatch({
-    packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
-    if (packageVersion("rgdal") != "1.5.28") {
-      inst_package(packageurl)}
-  }, 
-    error = function(x) {inst_package(packageurl)}
-  )
-  
+
+  packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
+  inst_package(packageurl)
+
+  # packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgeos/rgeos_0.5-8.tar.gz	'
+  # inst_package(packageurl)
+  # 
+  # packageurl <- 'https://cran.r-project.org/src/contrib/Archive/maptools/maptools_1.1-7.tar.gz'
+  # inst_package(packageurl)
 }
 
-
+#maptools, rgeos, rgdal, rstanarm
 ## Auto-Install packages
-.packs <- c("gdata", "zoo", "testthat", "readr", "maptools",
-            "ggplot2", "rgdal", "lubridate", "stringr",
-            "foreign", "jsonlite", "xtable", "dplyr", "tidyr",
-            "rgeos", "maps", "sp", "tidyr", "pointdensityP",
-            "ggmap", "mgcv", "viridis", "spdep", "ggrepel",
-            "tufte", "parallel", "mapproj", "cli", "geojsonio")
-.success <- suppressPackageStartupMessages(
-  suppressWarnings(sapply(.packs, require, character.only = TRUE))
-)
-if (length(names(.success)[!.success])) {
-  install.packages(names(.success)[!.success])
-  sapply(names(.success)[!.success], require, character.only = TRUE)
-}
+# .packs <- c("gdata", "zoo", "testthat", "readr", 
+#             "ggplot2",  "lubridate", "stringr",
+#             "foreign", "jsonlite", "xtable", "dplyr", "tidyr",
+#             "maps", "sp", "tidyr", "pointdensityP",
+#             "ggmap", "mgcv", "viridis", "spdep", "ggrepel",
+#             "tufte", "parallel", "mapproj", "cli", "geojsonio")
+# .success <- suppressPackageStartupMessages(
+#   suppressWarnings(sapply(.packs, require, character.only = TRUE))
+# )
+# if (length(names(.success)[!.success])) {
+#   install.packages(names(.success)[!.success])
+#   sapply(names(.success)[!.success], require, character.only = TRUE)
+# }
+
+
+library(gdata)
+library(zoo)
+library(testthat)
+library(readr)
+
+library(ggplot2)
+library(lubridate)
+library(stringr)
+
+library(foreign)
+library(jsonlite)
+library(xtable)
+library(dplyr)
+library(tidyr)
+
+library(maps)
+library(sp)
+library(tidyr)
+library(pointdensityP)
+
+library(ggmap)
+library(mgcv)
+library(viridis)
+library(spdep)
+library(ggrepel)
+
+library(tufte)
+library(parallel)
+library(mapproj)
+library(cli)
+library(geojsonio)
+library(hrbrthemes)
+library(rstanarm)
+
+
+library(rgdal)
+# library(rgeos)
+
 
 options(stringsAsFactors = FALSE)
 theme_set(theme_bw())

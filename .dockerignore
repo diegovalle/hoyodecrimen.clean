@@ -18,11 +18,7 @@ campaign
 
 
 clean-data/json/crime_trends.json
-clean-data/*/*.geojson
-clean-data/*/*.mbtiles
-clean-data/*/*.pmtiles
-clean-data/*/*.json
+clean-data/json/homicides.geojson
 data/colonias/
 old-ssp-data/
-renv/
 report/

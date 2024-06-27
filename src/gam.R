@@ -2,16 +2,29 @@ print("GAM model of homicide rates in CDMX")
 
 
 read_cdmx_map <- function() {
-  suppressWarnings(
-    cuad_map <- readOGR(file.path("shps_2016", "cuadrantes_population.shp"),
-                        layer = "cuadrantes_population",
-                        stringsAsFactors = FALSE,
-                        encoding = "latin1", 
-                        use_iconv = TRUE,
-                        verbose = FALSE)
-  )
-  # cuad_map@data$Sector2 <- cuad_map@data$Sector
-  # cuad_map@data$Sector_hoy <- cuad_map@data$Sector
+  if (cuadrantes_date == 2016) {
+    suppressWarnings(
+      cuad_map <- readOGR(file.path("shps_2016", "cuadrantes_population.shp"),
+                          layer = "cuadrantes_population",
+                          stringsAsFactors = FALSE,
+                          encoding = "latin1",
+                          use_iconv = TRUE,
+                          verbose = FALSE)
+    )
+  } else {
+    suppressWarnings(
+      cuad_map <- readOGR(file.path("shps_2023", "cuadrantes_population_2023.shp"),
+                          layer = "cuadrantes_population_2023",
+                          stringsAsFactors = FALSE,
+                          encoding = "latin1",
+                          use_iconv = TRUE,
+                          verbose = FALSE)
+    )
+    cuad_map@data$Sector2 <- cuad_map@data$Sector
+    cuad_map@data$Sector_hoy <- cuad_map@data$Sector
+  }
+  cuad_map@data$Sector2 <- cuad_map@data$Sector
+  cuad_map@data$Sector_hoy <- cuad_map@data$Sector
   cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEA"),
                 "Sector_hoy"] <- "TAXQUEÑA"
   cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEA"),
@@ -102,8 +115,15 @@ gam_crime_last_year <- function(crime = "HOMICIDIO DOLOSO", cuad_map, k,
   
   # get the neighbors of each cuadrante
   df <- droplevels(as(cuad_map, "data.frame"))
-  nb <- poly2nb(cuad_map, row.names = df$id)
+  nb <- poly2nb(as_Spatial(st_make_valid(st_as_sf(cuad_map))), row.names = df$id)
   names(nb) <- attr(nb, "region.id")
+  # Manually add some neighbors to Polygon 708 (Topilejo - S-4.5.8)
+  # besides polygon 287 (S-4.5.7):
+  # 497 (S-4.5.5), 193 (S-4.5.6)
+  nb[['708']] <- append(nb[['708']], as.integer(497))
+  nb[['708']] <- append(nb[['708']], as.integer(193))
+  nb[['497']] <- append(nb[['497']], as.integer(708))
+  nb[['193']] <- append(nb[['193']], as.integer(708))
   
   df <- data.frame(df, hom_last_year[match(df$Nomenclatu,
                                            hom_last_year$cuadrante), ])
@@ -111,13 +131,13 @@ gam_crime_last_year <- function(crime = "HOMICIDIO DOLOSO", cuad_map, k,
   df$count[!is.finite(df$count)] <- 0
   df$Nomenclatu <- factor(df$Nomenclatu)
   df$SUMPOB1 <- as.integer(df$SUMPOB1)
-  # No cuadrantes with zero population, (besides it doensn't happen IRL)
+  # No cuadrantes with zero population (besides, it doesn't happen IRL)
   df$SUMPOB1[df$SUMPOB1 < 100 ] <- 100
   df$SUMPOB1[is.na(df$SUMPOB1)] <- 100
   
   # Zero inflated?
-  ggplot(df, aes(count)) +
-    geom_histogram(bins = 40)
+  #ggplot(df, aes(count)) +
+  #  geom_histogram(bins = 40)
   
   df$id <- as.factor(df$id)
   
@@ -151,7 +171,7 @@ crime_gam_chart <- function(cuad_map, df, start_date, end_date) {
     group = NA
   )
   
-  
+ 
   fcuadrantes <- fortify(cuad_map, region = "Nomenclatu")
   fcuadrantes$id <- as.factor(fcuadrantes$id)
   mdata <- left_join(fcuadrantes,
@@ -207,9 +227,10 @@ k <- 710
 cuad_map <- read_cdmx_map()
 
 ll <- gam_crime_last_year("HOMICIDIO DOLOSO", cuad_map, k = k)
-p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
-ggsave("graphs/cdmx-smooth-latest-HOMICIDIO.png", 
-       plot = p, dpi = 100, width = 10, height = 13)
+# `fortify(<SpatialPolygonsDataFrame>, region = ...)` is defunct' was
+#p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
+#ggsave("graphs/cdmx-smooth-latest-HOMICIDIO.png",
+#       plot = p, dpi = 100, width = 10, height = 13)
 
 write(list(ll[["hom"]] %>%
              select( c("Nomenclatu", "rate", "pred_rate")) %>%
@@ -218,24 +239,56 @@ write(list(ll[["hom"]] %>%
              arrange(Nomenclatu) , 
            ll["start"], ll["end"]) %>%
         toJSON(dataframe = c("columns")),
-      "clean-data/json/smooth-map.json")
+      "clean-data/json/smooth-map-hom.json")
 
-# ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.", cuad_map, k = k)
+# ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR C.V.", cuad_map, k = 500)
+# write(list(ll[["hom"]] %>%
+#              select( c("Nomenclatu", "rate", "pred_rate")) %>%
+#              mutate(rate = round(rate, 1),
+#                     pred_rate = round(pred_rate, 1)) %>%
+#              arrange(Nomenclatu) , 
+#            ll["start"], ll["end"]) %>%
+#         toJSON(dataframe = c("columns")),
+#       "clean-data/json/smooth-map-rvcv.json")
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 # ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-CV.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)
 # 
 # ll <- gam_crime_last_year("ROBO DE VEHICULO AUTOMOTOR S.V.", cuad_map, k = k)
+# write(list(ll[["hom"]] %>%
+#              select( c("Nomenclatu", "rate", "pred_rate")) %>%
+#              mutate(rate = round(rate, 1),
+#                     pred_rate = round(pred_rate, 1)) %>%
+#              arrange(Nomenclatu) , 
+#            ll["start"], ll["end"]) %>%
+#         toJSON(dataframe = c("columns")),
+#       "clean-data/json/smooth-map-rvsv.json")
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 # ggsave("graphs/cdmx-smooth-latest.png-ROBO-DE-VEHICULO-SV.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)
 # 
 # ll <- gam_crime_last_year("ROBO A TRANSEUNTE C.V.", cuad_map, k = k)
+# write(list(ll[["hom"]] %>%
+#              select( c("Nomenclatu", "rate", "pred_rate")) %>%
+#              mutate(rate = round(rate, 1),
+#                     pred_rate = round(pred_rate, 1)) %>%
+#              arrange(Nomenclatu) , 
+#            ll["start"], ll["end"]) %>%
+#         toJSON(dataframe = c("columns")),
+#       "clean-data/json/smooth-map-tran.json")
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 # ggsave("graphs/cdmx-smooth-latest.png-ROBO-A-TRANSEUNTE-CV.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)
 # 
-# ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
+ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
+write(list(ll[["hom"]] %>%
+             select( c("Nomenclatu", "rate", "pred_rate")) %>%
+             mutate(rate = round(rate, 1),
+                    pred_rate = round(pred_rate, 1)) %>%
+             arrange(Nomenclatu) , 
+           ll["start"], ll["end"]) %>%
+        toJSON(dataframe = c("columns")),
+      "clean-data/json/smooth-map-laf.json")
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 # ggsave("graphs/cdmx-smooth-latest.png-LESIONES-POR-ARMA-DE-FUEGO.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)

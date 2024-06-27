@@ -22,8 +22,9 @@ jobs:
         DOCKER_PASSWORD: ${{  secrets.DOCKER_PASSWORD }}
       run: |
         docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-        docker pull diegovalle/docker-rstanarm:latest
-        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm -c "cd /hoyodecrimen  && Rscript run-all.R"
+        docker pull diegovalle/hoyodecrimen.clean:latest
+        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm -c "cd /hoyodecrimen && Rscript run-all.R"
+        #docker run --entrypoint /hoyodecrimen/convert-tiles.sh -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm 
     - name: Collect artifacts if analysis failed
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
@@ -31,7 +32,7 @@ jobs:
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       if: failure()
       run: |
-        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/* graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload charts, json and RData files
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
@@ -56,20 +57,9 @@ jobs:
         curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
         curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
         curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
-    - name: Update database
-      env:
-        CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
-        SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
-      run: |
-        sudo apt-get install -y spiped
-        ls -la /dev/shm
-        "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"
-    - name: Convert geojson to pmtiles
-      run: |
-        git clone https://github.com/mapbox/tippecanoe.git
-        cd tippecanoe
-        make -j
-        sudo make install 
-        curl -L https://github.com/protomaps/go-pmtiles/releases/download/v1.19.1/go-pmtiles_1.19.1_Linux_x86_64.tar.gz | sudo tar xvf -C /bin
-        tippecanoe --force -r1 -Z12 -z12 -o "$GITHUB_WORKSPACE"clean-data/json/homicides.mbtiles -l crime-lat-long-pgj -n "crime-lat-long-pgj" "$GITHUB_WORKSPACE"/clean-data/json/homicides.geojson
-        pmtiles convert "$GITHUB_WORKSPACE"/clean-data/json/homicides.mbtiles "$GITHUB_WORKSPACE"/clean-data/json/homicides.pmtiles
+    #- name: Update database
+    #  env:
+    #    CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
+    #    SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
+    #  run: |
+    #    "$GITHUB_WORKSPACE"/update/update.sh "$SQLALCHEMY_DATABASE_URI" "$CACHE_SECRET"

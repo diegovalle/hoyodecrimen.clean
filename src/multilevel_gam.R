@@ -155,7 +155,7 @@ jsondata <- lapply(as.character(unique(sims$crime)), function(x) {
   crime <- filter(a, crime == x)
   ll <- as.matrix(t(crime[, c("l", "m", "u", "r")]))
   ll <- round(ll, 1)
-  ll <- lst(!!crime_name := ll, trend = crime$trend[1])
+  ll <- lst(!!crime_name := ll, trend = crime$trend[1], start_year = min(year(df$date)))
   return(ll)
 })
 write(toJSON(jsondata), "clean-data/json/crime_trends.json")

@@ -27,6 +27,12 @@ CREATE INDEX ON cuadrantes_new (cuadrante, crime, date);
 CREATE INDEX ON cuadrantes_new ((upper(crime)), date, sector);
 CREATE INDEX ON cuadrantes_new ((upper(crime)), date, cuadrante);
 CREATE INDEX ON cuadrantes_new USING btree ((upper(cuadrante)), crime);
+CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(sector)),"date");
+CREATE INDEX ON "cuadrantes_new" ("sector","crime","date");
+CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(cuadrante)),"date");
+CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(cuadrante)),"crime","date");
+CREATE INDEX ON "cuadrantes_new" ((upper(crime)),"date");
+
 -- pgj
 --DROP TABLE IF EXISTS pgj_new;
 CREATE TABLE pgj_new (

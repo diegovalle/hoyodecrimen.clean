@@ -12,7 +12,7 @@ density_last_year <- function(crime){
     filter(crime == !!crime) %>%
     na.omit()
   SD_density <- pointdensity(df = points, lat_col = "lat", lon_col = "long",
-                             date_col = "date", grid_size = 0.1, radius = 1)
+                             date_col = "date", grid_size = .1, radius = 1)
   return(list("density" = SD_density, "start" = min(points$date),
               "end" = max(points$date, na.rm = TRUE)))
 }
@@ -37,6 +37,11 @@ density_chart <- function(crime, ll) {
 }
 
 ll <- density_last_year("HOMICIDIO DOLOSO")
+xy <- round(ll$density[, c("lon", "lat")], 6)
+spdf <- SpatialPointsDataFrame(coords = xy, 
+                               data = select(ll$density, -c(lat, lon)),
+                               proj4string = CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
+geojson_write(spdf, file = "clean-data/json/homicides-density.geojson")
 p <- density_chart("homicide", ll)
 ggsave("graphs/density_homicides.png", 
        plot = p, dpi = 100, width = 7, height = 8)

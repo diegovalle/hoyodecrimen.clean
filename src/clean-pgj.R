@@ -95,16 +95,27 @@ df <- filter(df, Categoría.de.delito %in% c(
 
 
 ## To which cuadrante do the lat + long belong
-suppressWarnings(
-  cuad_map <- readOGR(file.path("shps_2016", "cuadrantes_population.shp"),
-                      layer = "cuadrantes_population",
-                      stringsAsFactors = FALSE,
-                      encoding = "latin1",
-                      use_iconv = TRUE,
-                      verbose = FALSE)
-)
-# cuad_map@data$Sector2 <- cuad_map@data$Sector
-# cuad_map@data$Sector_hoy <- cuad_map@data$Sector
+if (cuadrantes_date == 2016) {
+  suppressWarnings(
+    cuad_map <- readOGR(file.path("shps_2016", "cuadrantes_population.shp"),
+                        layer = "cuadrantes_population",
+                        stringsAsFactors = FALSE,
+                        encoding = "latin1",
+                        use_iconv = TRUE,
+                        verbose = FALSE)
+  )
+} else {
+  suppressWarnings(
+    cuad_map <- readOGR(file.path("shps_2023", "cuadrantes_population_2023.shp"),
+                        layer = "cuadrantes_population_2023",
+                        stringsAsFactors = FALSE,
+                        encoding = "latin1",
+                        use_iconv = TRUE,
+                        verbose = FALSE)
+  )
+  cuad_map@data$Sector2 <- cuad_map@data$Sector
+  cuad_map@data$Sector_hoy <- cuad_map@data$Sector
+}
 cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEA"),
               "Sector_hoy"] <- "TAXQUEÑA"
 cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEA"),

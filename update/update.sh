@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Run as
-#"  ./update.sh update.sh $SQLALCHEMY_DATABASE_URI $CACHE_SECRET
+#"  ./update.sh $SQLALCHEMY_DATABASE_URI $CACHE_SECRET
 
 set -euo pipefail #exit on error, undefined and prevent pipeline errors
 IFS=$'\n\t'
