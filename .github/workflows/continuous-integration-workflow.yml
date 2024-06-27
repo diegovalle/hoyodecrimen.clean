@@ -23,7 +23,7 @@ jobs:
       run: |
         docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         docker pull diegovalle/hoyodecrimen.clean:latest
-        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm -c "cd /hoyodecrimen && Rscript run-all.R"
+        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
         #docker run --entrypoint /hoyodecrimen/convert-tiles.sh -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm 
     - name: Collect artifacts if analysis failed
       env:
