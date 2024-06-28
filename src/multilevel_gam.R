@@ -4,6 +4,7 @@ if (Sys.getenv("CI") == "true") {
   install.packages("hrbrthemes", repos = "https://cinc.rud.is")
 }
 library(hrbrthemes)
+print("run multilevel model")
 
 df <- cuadrantes %>%
   group_by(crime) %>%

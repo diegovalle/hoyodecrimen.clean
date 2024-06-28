@@ -1,3 +1,4 @@
+print("GAM smooth model of homicide rates in the colonias of CDMX")
 
 get_dates <- function() {
   df <- read.csv("clean-data/crime-lat-long-pgj.csv") 
@@ -71,12 +72,13 @@ df_col$id <- as.character(df_col$ID)
 setdiff(names(nb), df_col$id)
 df_col$NOMDT <- as.factor(df_col$NOMDT)
 
+print("running GAM")
 m1 <- gam(hom_count ~ s(as.factor(id),
                     bs = "mrf",
                     k = 1500,
                     xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
-          #control =  gam.control(nthreads = detectCores()),
+          control =  gam.control(nthreads = detectCores()),
           method = "REML",
           family = ziP
 )

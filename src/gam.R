@@ -280,15 +280,15 @@ write(list(ll[["hom"]] %>%
 # ggsave("graphs/cdmx-smooth-latest.png-ROBO-A-TRANSEUNTE-CV.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)
 # 
-ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
-write(list(ll[["hom"]] %>%
-             select( c("Nomenclatu", "rate", "pred_rate")) %>%
-             mutate(rate = round(rate, 1),
-                    pred_rate = round(pred_rate, 1)) %>%
-             arrange(Nomenclatu) , 
-           ll["start"], ll["end"]) %>%
-        toJSON(dataframe = c("columns")),
-      "clean-data/json/smooth-map-laf.json")
+# ll <- gam_crime_last_year("LESIONES POR ARMA DE FUEGO", cuad_map, k = k)
+# write(list(ll[["hom"]] %>%
+#              select( c("Nomenclatu", "rate", "pred_rate")) %>%
+#              mutate(rate = round(rate, 1),
+#                     pred_rate = round(pred_rate, 1)) %>%
+#              arrange(Nomenclatu) , 
+#            ll["start"], ll["end"]) %>%
+#         toJSON(dataframe = c("columns")),
+#       "clean-data/json/smooth-map-laf.json")
 # p <- crime_gam_chart(cuad_map, ll[["hom"]], ll[["start"]], ll[["end"]])
 # ggsave("graphs/cdmx-smooth-latest.png-LESIONES-POR-ARMA-DE-FUEGO.png", 
 #        plot = p, dpi = 100, width = 10, height = 13)
