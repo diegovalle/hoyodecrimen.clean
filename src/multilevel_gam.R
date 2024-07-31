@@ -1,10 +1,4 @@
-library(rstanarm)
-if (Sys.getenv("CI") == "true") {
-  print(packageVersion("dplyr"))
-  install.packages("hrbrthemes", repos = "https://cinc.rud.is")
-}
-library(hrbrthemes)
-print("run multilevel model")
+print("run stan_gamm4 multilevel model")
 
 df <- cuadrantes %>%
   group_by(crime) %>%
@@ -27,7 +21,7 @@ m1 <- stan_gamm4(n ~ s(time, by = crime) + offset(log(duration)) + covid, # + s(
                  family = poisson, 
                  random = ~(1 | crime), 
                  data = df, 
-                 chains = 4,
+                 chains = use_cores,
                  iter = 2000,
                  adapt_delta = .99, 
                  cores = 4,

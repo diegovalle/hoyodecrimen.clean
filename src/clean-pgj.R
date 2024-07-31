@@ -104,51 +104,79 @@ if (cuadrantes_date == 2016) {
                         use_iconv = TRUE,
                         verbose = FALSE)
   )
+  cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEA"),
+                "Sector_hoy"] <- "TAXQUEÑA"
+  cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEA"),
+                "Sector"] <- "TAXQUEÑA"
+  cuad_map@data[which(cuad_map@data[, "Sector2"] == "TAXQUEA"),
+                "Sector2"] <- "TAXQUEÑA"
 } else {
   suppressWarnings(
     cuad_map <- readOGR(file.path("shps_2023", "cuadrantes_population_2023.shp"),
                         layer = "cuadrantes_population_2023",
                         stringsAsFactors = FALSE,
-                        encoding = "latin1",
+                        encoding = "utf-8",
                         use_iconv = TRUE,
                         verbose = FALSE)
   )
   cuad_map@data$Sector2 <- cuad_map@data$Sector
   cuad_map@data$Sector_hoy <- cuad_map@data$Sector
+  cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEÑA"),
+                "Sector_hoy"] <- "TAXQUENA"
+  
+  cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEÑA"),
+                "Sector"] <- "TAXQUEÑA"
+  cuad_map@data[which(cuad_map@data[, "Sector2"] == "TAXQUEÑA"),
+                "Sector2"] <- "TAXQUEÑA"
 }
-cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEA"),
-              "Sector_hoy"] <- "TAXQUEÑA"
-cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEA"),
-              "Sector"] <- "TAXQUEÑA"
-cuad_map@data[which(cuad_map@data[, "Sector2"] == "TAXQUEA"),
-              "Sector2"] <- "TAXQUEÑA"
-# expect_equal(sort(unique(cuad_map@data$Sector_hoy)),
-#              sort(c("SAN ANGEL", "TEOTONGO", "TLATELOLCO",
-#                "BUENAVISTA", "MIXCALCO-HERALDO",
-#                "REVOLUCION-ALAMEDA", "ANGEL-ZONA ROSA", "ROMA", "CONGRESO",
-#                "CUAUTEPEC", "CUCHILLA", "IZTACCIHUATL",
-#                "CONSULADO", "MERCED-BALBUENA",
-#                "MOCTEZUMA", "QUIROGA", "TEPEYAC", "TICOMAN",
-#                "ZARAGOZA", "LINDAVISTA",
-#                "TLACOTAL", "PANTITLAN", "ARENAL", "PRADERA",
-#                "ASTURIAS", "ZAPOTITLA",
-#                "UNIVERSIDAD", "CHURUBUSCO", "ABASTO-REFORMA",
-#                "ESTRELLA", "TEZONCO",
-#                "QUETZAL", "NARVARTE-ALAMOS", "COAPA", "COYOACAN",
-#                "CULHUACAN",
-#                "DEL VALLE", "NATIVITAS", "PORTALES", "NAPOLES",
-#                "TAXQUEÑA", "XOTEPINGO",
-#                "TACUBA", "SOTELO", "CHAPULTEPEC",
-#                "POLANCO-CASTILLO", "TACUBAYA",
-#                "HORMIGA", "CLAVERIA", "CUITLAHUAC",
-#                "LA RAZA", "MILPA ALTA",
-#                "MIXQUIC", "HUIPULCO-HOSPITALES",
-#                "SAN JERONIMO", "FUENTE", "SANTA CRUZ",
-#                "OASIS", "TECOMITL", "LA NORIA", "SANTA FE",
-#                "GRANJAS", "PLATEROS",
-#                "DINAMO", "ARAGON", "ALPES", "CORREDOR-CENTRO",
-#                "MORELOS", "EL YAQUI",
-#                "PADIERNA", "TEPEPAN", "CUAJIMALPA")))
+
+
+
+if (cuadrantes_date == 2016) 
+  expect_equal(sort(unique(cuad_map@data$Sector_hoy)),
+               sort(c("SAN ANGEL", "TEOTONGO", "TLATELOLCO",
+                      "BUENAVISTA", "MIXCALCO-HERALDO",
+                      "REVOLUCION-ALAMEDA", "ANGEL-ZONA ROSA", "ROMA", "CONGRESO",
+                      "CUAUTEPEC", "CUCHILLA", "IZTACCIHUATL",
+                      "CONSULADO", "MERCED-BALBUENA",
+                      "MOCTEZUMA", "QUIROGA", "TEPEYAC", "TICOMAN",
+                      "ZARAGOZA", "LINDAVISTA",
+                      "TLACOTAL", "PANTITLAN", "ARENAL", "PRADERA",
+                      "ASTURIAS", "ZAPOTITLA",
+                      "UNIVERSIDAD", "CHURUBUSCO", "ABASTO-REFORMA",
+                      "ESTRELLA", "TEZONCO",
+                      "QUETZAL", "NARVARTE-ALAMOS", "COAPA", "COYOACAN",
+                      "CULHUACAN",
+                      "DEL VALLE", "NATIVITAS", "PORTALES", "NAPOLES",
+                      "TAXQUEÑA", "XOTEPINGO",
+                      "TACUBA", "SOTELO", "CHAPULTEPEC",
+                      "POLANCO-CASTILLO", "TACUBAYA",
+                      "HORMIGA", "CLAVERIA", "CUITLAHUAC",
+                      "LA RAZA", "MILPA ALTA",
+                      "MIXQUIC", "HUIPULCO-HOSPITALES",
+                      "SAN JERONIMO", "FUENTE", "SANTA CRUZ",
+                      "OASIS", "TECOMITL", "LA NORIA", "SANTA FE",
+                      "GRANJAS", "PLATEROS",
+                      "DINAMO", "ARAGON", "ALPES", "CORREDOR-CENTRO",
+                      "MORELOS", "EL YAQUI",
+                      "PADIERNA", "TEPEPAN", "CUAJIMALPA")))
+if (cuadrantes_date == 2023) 
+  expect_equal(sort(unique(cuad_map@data$Sector_hoy)),
+               sort(c("ABASTO-REFORMA", "ALAMEDA", "ALPES", "ANGEL", "ARAGON", "ARENAL", 
+                      "ASTURIAS", "BUENAVISTA", "CENTRO", "CHAPULTEPEC", "CHURUBUSCO", 
+                      "CLAVERIA", "COAPA", "CONGRESO", "CONSULADO", "COYOACAN", "CUAJIMALPA", 
+                      "CUAUTEPEC", "CUCHILLA", "CUITLAHUAC", "CULHUACAN", "DEL VALLE", 
+                      "DINAMO", "EL YAQUI", "ESTRELLA", "FUENTE", "GRANJAS", "HORMIGA", 
+                      "HUIPULCO-HOSPITALES", "IZTACCIHUATL", "LA NORIA", "LA RAZA", 
+                      "LINDAVISTA", "MERCED-BALBUENA", "MILPA ALTA", "MIXQUIC", "MOCTEZUMA", 
+                      "MORELOS", "NAPOLES", "NARVARTE-ALAMOS", "NATIVITAS", "OASIS", 
+                      "PADIERNA", "PANTITLAN", "PLATEROS", "POLANCO-CASTILLO", "PORTALES", 
+                      "PRADERA", "QUETZAL", "QUIROGA", "ROMA", "SAN ANGEL", "SAN JERONIMO", 
+                      "SANTA CRUZ", "SANTA FE", "SOTELO", "TACUBA", "TACUBAYA", 
+                      "TAXQUENA", 
+                      "TECOMITL", "TEOTONGO", "TEPEPAN", "TEPEYAC", "TEZONCO", "TICOMAN", 
+                      "TLACOTAL", "TLATELOLCO", "TOPILEJO", "UNIVERSIDAD", "XOTEPINGO", 
+                      "ZAPOTITLA", "ZARAGOZA")))
 ID <- filter(df, !is.na(df$Longitud))
 ID <- filter(ID, !is.na(ID$Latitud))
 coordinates(ID) <- ~ Longitud + Latitud
@@ -376,7 +404,8 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
 
 ### File for the cartodb map visualization
 extra_homicide <- data.frame(
-  cuadrante="S-3.6.7",
+  cuadrante = "S-4.4.7", # "S-3.6.7",
+  sector = "PADIERNA", 
   crime="HOMICIDIO DOLOSO",
   date="2023-02-23",
   hour=NA,
@@ -398,7 +427,7 @@ df %>%
   mutate(month = month(date)) %>%
   mutate(date = as.character(format(date, "%Y-%m-%d"))) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
-  select(cuadrante, crime, date, hour, year, month, lat, long) %>%
+  select(cuadrante, sector, crime, date, hour, year, month, lat, long) %>%
   rbind(extra_homicide) %>%
   mutate(id = row_number()) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)

@@ -64,6 +64,13 @@ nb[[1530]] <- append(nb[[1530]], as.integer(1188))
 nb[[1323]] <- append(nb[[1323]], as.integer(1302))
 nb[[1302]] <- append(nb[[1302]], as.integer(1323))
 
+
+nb[[1171]] <- append(nb[[1171]], as.integer(1173))
+nb[[1173]] <- append(nb[[1173]], as.integer(1171)) # island
+
+nb[[1175]] <- append(nb[[1175]], as.integer(1171))
+nb[[1171]] <- append(nb[[1171]], as.integer(1175)) # island
+
 col$SUMPOB1[col$SUMPOB1 < 100 ] <- 100
 
 df_col <- as.data.frame(col)
@@ -78,8 +85,9 @@ m1 <- gam(hom_count ~ s(as.factor(id),
                     k = 1500,
                     xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
-          control =  gam.control(nthreads = detectCores()),
-          method = "REML",
+          control =  gam.control(nthreads = use_cores, trace = TRUE,
+                                  maxit = 50),
+          method = "GCV",
           family = ziP
 )
 
