@@ -39,7 +39,7 @@ jobs:
         APPLICATION_KEY: ${{  secrets.APPLICATION_KEY }}
         BUCKET_ID: ${{  secrets.BUCKET_ID }}
       run: |
-        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.RData graphs/* clean-data/json/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+        cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.csv clean-data/*.RData graphs/* clean-data/json/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
     - name: upload csv files to b2
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}

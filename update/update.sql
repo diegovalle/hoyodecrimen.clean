@@ -1,10 +1,10 @@
 -- psql -d apihoyodecrimen -f update.sql
-\set cuadrantes :temp '/cuadrantes-pgj.csv'
-\set pgj :temp '/pgj.csv'
-\set crimelatlongpgj :temp '/crime-lat-long-pgj.csv'
+\set cuadrantes :dir '/cuadrantes-pgj.csv'
+\set pgj :dir '/pgj.csv'
+\set crimelatlongpgj :dir '/crime-lat-long-pgj.csv'
 
-\set smoothgamhomicides :temp '/json/smooth-map-colonias-hom.json'
-\set crime_trends :temp '/json/crime_trends.json'
+\set smoothgamhomicides :dir '/json/smooth-map-colonias-hom.json'
+\set crime_trends :dir '/json/crime_trends.json'
 
 
 BEGIN;
@@ -52,6 +52,7 @@ CREATE TABLE pgj_new (
 --CREATE INDEX ON pgj_new (crime);
 -- crime_latlong
 TRUNCATE TABLE crime_latlong;
+ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS sector VARCHAR(20); --
 \set command3 '\\copy crime_latlong (cuadrante,sector,crime,date,hour,year,month,latitude,longitude,id) from ' :'crimelatlongpgj' ' with delimiter as '','' NULL AS ''NA'' CSV HEADER;'
 :command3
 UPDATE crime_latlong
@@ -59,8 +60,9 @@ SET geom = ST_GeomFromText(
     'POINT(' || longitude || ' ' || latitude || ')',
     4326
   );
---update crime_latlong set hour_int =  substring(hour, 1, 2)::int;
---create index hour_int_idx on crime_latlong (hour_int);
+ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS hour_int INTEGER; --
+update crime_latlong set hour_int =  substring(hour, 1, 2)::int;
+create index hour_int_idx on crime_latlong (hour_int);
 -- The ALTER TABLE ... RENAME TO command takes an Access Exclusive lock on 'table'
 ALTER TABLE cuadrantes
   RENAME TO cuadrantes_old;
@@ -91,3 +93,15 @@ update json_files set data = lo_get(:LASTOID) where name = 'crime_trends';
 CREATE UNIQUE INDEX IF NOT EXISTS  filenames ON json_files(name);
 
 COMMIT;
+
+
+-- To update the cuadrantes:
+-- table must have id (the cuadrante code) , sector and geom columns
+-- ogr2ogr -f "PostgreSQL" -t_srs "EPSG:4326" "PG:host= port= user= dbname= password=" cuadrantes_population_2023.gpkg  -nlt PROMOTE_TO_MULTI -nln cuadrantes_poly -sql "select geom, cuadrante as id, sector from cuadrantes_population_2023__count" -overwrite
+-- CREATE SEQUENCE public.cuadrantes_poly_gid_seq
+--   START WITH 1
+--   INCREMENT BY 1
+--   NO MINVALUE
+--   NO MAXVALUE
+--   CACHE 1;
+
