@@ -14,6 +14,11 @@ get_dates <- function() {
 col <-st_make_valid( st_read("colonias/colonias_iecm.gpkg") )
 dates <- get_dates()
 
+# Add a sector column to the colonias shapefile
+col_sec <- read.csv("shps_2023/colonias-sectores.csv")
+col_sec <- select(col_sec, CVEUT, sector)
+col <- left_join(col, col_sec, by = "CVEUT")
+
 crimes <- filter(dates$hom, crime == "HOMICIDIO DOLOSO", !is.na(lat), !is.na(long),
                  date <= dates$end, date >= dates$start) |>
   st_as_sf(coords=c("long","lat"), crs=4326)
@@ -80,9 +85,10 @@ setdiff(names(nb), df_col$id)
 df_col$NOMDT <- as.factor(df_col$NOMDT)
 
 print("running GAM")
-m1 <- gam(hom_count ~ s(as.factor(id),
+start.time <- Sys.time()
+m1 <- gam(hom_count ~ s(as.factor(id) + sector,
                     bs = "mrf",
-                    k = 1500,
+                    k = 1600,
                     xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
           control =  gam.control(nthreads = use_cores, trace = TRUE,
@@ -90,7 +96,11 @@ m1 <- gam(hom_count ~ s(as.factor(id),
           method = "GCV",
           family = ziP
 )
-
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+print("###################################")
+print(paste0("GAM took: ", time.taken, " hours"))
+print("###################################")
 
 df.new <- df_col
 # pop column is equal to 1, so as to have log(population)=0,
