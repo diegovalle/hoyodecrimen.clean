@@ -51,6 +51,19 @@ CREATE TABLE pgj_new (
 :command2
 --CREATE INDEX ON pgj_new (crime);
 -- crime_latlong
+CREATE TABLE IF NOT EXISTS crime_latlong (
+        cuadrante varchar (20),
+	    crime varchar (60),
+	    date  varchar (10),
+	    hour  varchar (10),
+	    year  varchar (10),
+	    month  varchar (10),
+        latitude double precision,
+        longitude double precision,
+        id integer,
+        geom geometry,
+        PRIMARY KEY(id)
+        );
 TRUNCATE TABLE crime_latlong;
 ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS sector VARCHAR(20); --
 \set command3 '\\copy crime_latlong (cuadrante,sector,crime,date,hour,year,month,latitude,longitude,id) from ' :'crimelatlongpgj' ' with delimiter as '','' NULL AS ''NA'' CSV HEADER;'
@@ -62,7 +75,7 @@ SET geom = ST_GeomFromText(
   );
 ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS hour_int INTEGER; --
 update crime_latlong set hour_int =  substring(hour, 1, 2)::int;
-create index hour_int_idx on crime_latlong (hour_int);
+create index IF NOT EXISTS hour_int_idx on crime_latlong (hour_int);
 -- The ALTER TABLE ... RENAME TO command takes an Access Exclusive lock on 'table'
 ALTER TABLE cuadrantes
   RENAME TO cuadrantes_old;
