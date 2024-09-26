@@ -11,3 +11,4 @@
 /api/v1/cuadrantes/all/crimes/HOMICIDIO%20DOLOSO/period/change
 /api/v1/cuadrantes/all/crimes/HOMICIDIO%20DOLOSO/period
 /api/v1/crimes_extra
+/api/v1/hextiles/crimes/HOMICIDIO%20DOLOSO/top/aggregate

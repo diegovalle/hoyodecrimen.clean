@@ -65,8 +65,9 @@ CREATE TABLE IF NOT EXISTS crime_latlong (
         PRIMARY KEY(id)
         );
 TRUNCATE TABLE crime_latlong;
-ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS sector VARCHAR(20); --
-\set command3 '\\copy crime_latlong (cuadrante,sector,crime,date,hour,year,month,latitude,longitude,id) from ' :'crimelatlongpgj' ' with delimiter as '','' NULL AS ''NA'' CSV HEADER;'
+ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS sector VARCHAR(20);
+ALTER TABLE crime_latlong ADD COLUMN IF NOT EXISTS hex_idx smallint;
+\set command3 '\\copy crime_latlong (cuadrante,sector,hex_idx,crime,date,hour,year,month,latitude,longitude,id) from ' :'crimelatlongpgj' ' with delimiter as '','' NULL AS ''NA'' CSV HEADER;'
 :command3
 UPDATE crime_latlong
 SET geom = ST_GeomFromText(

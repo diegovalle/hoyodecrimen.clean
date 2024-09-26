@@ -406,6 +406,7 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
 extra_homicide <- data.frame(
   cuadrante = "S-4.4.7", # "S-3.6.7",
   sector = "PADIERNA", 
+  hex_idx = 17,
   crime="HOMICIDIO DOLOSO",
   date="2023-02-23",
   hour=NA,
@@ -414,6 +415,11 @@ extra_homicide <- data.frame(
   lat=19.266600098223492, 
   long=-99.22941787182792
 )
+
+
+
+df <- left_join(df,  read.csv("shps_2023/hextiles-cuadrantes.csv"),
+                by = c("cuadrante" = "Nomenclatu"))
 
 df %>%
   mutate(date = fast_strptime(as.character(df$fecha_hechos2),
@@ -427,7 +433,7 @@ df %>%
   mutate(month = month(date)) %>%
   mutate(date = as.character(format(date, "%Y-%m-%d"))) %>%
   rename("lat" = "Latitud", "long" = "Longitud") %>%
-  select(cuadrante, sector, crime, date, hour, year, month, lat, long) %>%
+  select(cuadrante, sector, hex_idx, crime, date, hour, year, month, lat, long) %>%
   rbind(extra_homicide) %>%
   mutate(id = row_number()) %>%
   write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
