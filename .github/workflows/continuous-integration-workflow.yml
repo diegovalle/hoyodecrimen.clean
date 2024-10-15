@@ -4,7 +4,7 @@ on:
   # Fine-grained personal access tokens
   # The fine-grained token must have the following permission set:
   # "Contents" repository permissions (write)
-  # curl -H "Accept: application/vnd.github+json" -H "Authorization: token <TOKEN>" --request POST --data '{"event_type": "deploy-website"}' https://api.github.com/repos/diegovalle/hoydecrimen.clean/dispatches
+  # curl -H "Accept: application/vnd.github+json" -H "Authorization: token <TOKEN>" --request POST --data '{"event_type": "deploy-website"}' https://api.github.com/repos/diegovalle/hoyodecrimen.clean/dispatches
   repository_dispatch:
     types: deploy-website
   push:
