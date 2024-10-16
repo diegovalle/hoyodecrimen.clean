@@ -358,7 +358,9 @@ expect_equal(as.character(month(df$fecha_hechos2, label = TRUE, abbr = TRUE)),
                              c("Enero" = "Jan", "Febrero" = "Feb", "Marzo" = "Mar",
                                "Abril" = "Apr", "Mayo" = "May", "Junio" = "Jun",
                                "Julio" = "Jul", "Agosto" = "Aug", "Septiembre" = "Sep",
-                               "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec"))
+                               "Octubre" = "Oct", "Noviembre" = "Nov", "Diciembre" = "Dec",
+                               # WTF, sometimes the months are entered in English
+                               "August" = "Aug", "July" = "Jul"))
 )
 
 df$Mes.y.año <- format(as.Date(df$fecha_hechos2), "%Y-%m")
