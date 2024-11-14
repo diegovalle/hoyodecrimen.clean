@@ -1,4 +1,4 @@
-print("Cleaning PGJ-CDMX data")
+print("Cleaning PGJ-CDMX Carpetas data")
 ## File available at:
 # https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
 
@@ -47,11 +47,11 @@ df <- carpetas_latest
 # rename columns to standardize names
 df <- df %>% rename(Latitud = latitud,
                     Longitud = longitud,
-              Categoría.de.delito = categoria_delito,
-              fecha_hechos = fecha_hechos,
-              Año = ao_hechos,
-              Mes = mes_hechos,
-              Delito = delito)
+                    Categoría.de.delito = categoria_delito,
+                    fecha_hechos = fecha_hechos,
+                    Año = ao_hechos,
+                    Mes = mes_hechos,
+                    Delito = delito)
 df$Año <- year(as.Date(df$fecha_hechos))
 
 df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)
@@ -400,7 +400,7 @@ cuadrantes$count[is.na(cuadrantes$count)] <- 0
 cuadrantes$sector[is.na(cuadrantes$sector)] <- "NO ESPECIFICADO"
 cuadrantes <- cuadrantes[, c("cuadrante", "crime", "date", "count", "year",
                       "sector", "population")]
-write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
+write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj_carpetas.csv"),
           row.names = FALSE)
 
 
@@ -438,7 +438,7 @@ df %>%
   select(cuadrante, sector, hex_idx, crime, date, hour, year, month, lat, long) %>%
   rbind(extra_homicide) %>%
   mutate(id = row_number()) %>%
-  write.csv("clean-data/crime-lat-long-pgj.csv", row.names = FALSE)
+  write.csv("clean-data/crime-lat-long-pgj_carpetas.csv", row.names = FALSE)
 
 ## Sometimes there are problems with the timezone in the data
 ## check that most homicides occur at ~midnight
@@ -450,7 +450,7 @@ df %>%
   ggplot(aes(hour, n)) +
   geom_col() +
   ggtitle("Robo de Metro - Most homicides should occur at midnight or for robo de metro none during late night")
-ggsave(filename = "graphs/check.png", width = 7, height = 5, dpi = 100)
+ggsave(filename = "graphs/check_carpetas.png", width = 7, height = 5, dpi = 100)
 
 cuadrantes %>%
   group_by(date, crime) %>%
@@ -462,5 +462,4 @@ cuadrantes %>%
     expand_limits(y = 0) +
     labs(title = "Crimen en la Ciudad de México") +
     facet_wrap(~ crime, scale = "free_y")
-ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
-
+ggsave("graphs/crimes_carpetas.png", dpi = 100, width = 14, height = 7)

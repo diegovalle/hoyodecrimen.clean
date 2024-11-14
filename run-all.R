@@ -13,8 +13,10 @@ use_cores <- parallel::detectCores()
 
 main <- function() {
   source(file.path("src", "packages.R"))
-  # Clean PGJ-CDMX data
-  source(file.path("src", "clean-pgj.R"))
+  # Clean PGJ-CDMX Carpetas data
+  source(file.path("src", "clean-pgj-carpetas.R"))
+  # Clean PGJ-CDMX Víctimas data
+  source(file.path("src", "clean-pgj-victimas.R"))
   # Clean SESNSP data
   source(file.path("src", "sesnsp.R"))
   # Analysis

@@ -1,7 +1,7 @@
 print("GAM smooth model of homicide rates in the colonias of CDMX")
 
 get_dates <- function() {
-  df <- read.csv("clean-data/crime-lat-long-pgj.csv") 
+  df <- read.csv("clean-data/crime-lat-long-pgj_carpetas.csv") 
   
   # be careful about dates like 2016-02-29 which return NULL
   # when a year is substracted from them
@@ -19,7 +19,8 @@ col_sec <- read.csv("shps_2023/colonias-sectores.csv")
 col_sec <- select(col_sec, CVEUT, sector)
 col <- left_join(col, col_sec, by = "CVEUT")
 
-crimes <- filter(dates$hom, crime == "HOMICIDIO DOLOSO", !is.na(lat), !is.na(long),
+crimes <- filter(read.csv("clean-data/crime-lat-long-pgj.csv") , 
+                 crime == "HOMICIDIO DOLOSO", !is.na(lat), !is.na(long),
                  date <= dates$end, date >= dates$start) |>
   st_as_sf(coords=c("long","lat"), crs=4326)
 col$hom_count <- lengths(st_intersects(col, crimes))
@@ -87,12 +88,12 @@ df_col$NOMDT <- as.factor(df_col$NOMDT)
 print("running GAM")
 start.time <- Sys.time()
 m1 <- gam(hom_count ~ s(as.factor(id) + sector,
-                    bs = "mrf",
-                    k = 1600,
-                    xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
+                        bs = "mrf",
+                        k = 1600,
+                        xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
           control =  gam.control(nthreads = use_cores, trace = TRUE,
-                                  maxit = 50),
+                                 maxit = 50),
           method = "GCV",
           family = ziP
 )
@@ -168,4 +169,3 @@ write(list(as.data.frame(col) %>%
            list("start" = dates$start),  list("end" = dates$end)) %>%
         toJSON(dataframe = c("columns")),
       "clean-data/json/smooth-map-colonias-hom.json")
-
