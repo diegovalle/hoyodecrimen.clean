@@ -25,11 +25,21 @@ crimes <- filter(read.csv("clean-data/crime-lat-long-pgj.csv") ,
   st_as_sf(coords=c("long","lat"), crs=4326)
 col$hom_count <- lengths(st_intersects(col, crimes))
 
+centr <- st_as_sf(col) |> mutate(cntr = st_centroid(geom),
+               within_dist = st_is_within_distance(cntr, dist = 100))
+nb_distance <- centr[["within_dist"]]
 
-nb <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
-names(nb) <- attr(nb, "region.id")
+nb_neighbor <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
+# For some reason polygon id 1125 is missing 
+names(nb_distance) <- attr(nb_neighbor, "region.id")
+names(nb_neighbor) <- attr(nb_neighbor, "region.id")
+nb_combined <- list()
+for(i in names(nb_neighbor)) {
+  nb_combined[[i]] <- unique(c(nb_neighbor[[i]], nb_distance[[i]]))
+}
+nb <- nb_neighbor
+
 setdiff(names(nb), col$ID)
-
 # Manually add some neighbors to Polygon '1276' - '12-115'
 nb[[1188]] <- append(nb[[1188]], as.integer(1276))
 nb[[1276]] <- append(nb[[1276]], as.integer(1188)) # island
@@ -123,7 +133,7 @@ col$rate <- df_col$rate
 
 p <- ggplot(col) +
   geom_sf(aes(fill =exp(pred_rate)), color = "#111111", linewidth = .06) +
-  scale_fill_viridis(option="H") +
+  scale_fill_viridis(option="H", limits = c(0, max(exp(col$pred_rate)))) +
   theme_minimal() +
   theme(legend.position = "top",
         axis.line = element_blank(),
