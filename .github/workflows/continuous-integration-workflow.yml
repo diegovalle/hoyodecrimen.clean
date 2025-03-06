@@ -27,8 +27,7 @@ jobs:
       run: |
         docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         docker pull diegovalle/hoyodecrimen.clean:latest
-        docker run --entrypoint /bin/sh -e CI="true" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
-        #docker run --entrypoint /hoyodecrimen/convert-tiles.sh -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/docker-rstanarm 
+        docker run --entrypoint /bin/sh -e CI="true" -e FUERO_ESTADOS_URL="$FUERO_ESTADOS_URL" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
     - name: Collect artifacts if analysis failed
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
@@ -54,13 +53,6 @@ jobs:
         zip -j crime-lat-long-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/crime-lat-long-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh crime-lat-long-pgj.csv.zip
         zip -j cuadrantes-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh cuadrantes-pgj.csv.zip
         zip -j pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh pgj.csv.zip
-    - name: Invalidate stale cache
-      env:
-        CACHE_INVALIDATE_HEADER: ${{ secrets.CACHE_INVALIDATE_HEADER }}
-      run: |
-        curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/crime-lat-long-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
-        curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/cuadrantes-pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
-        curl --retry 10 -o /dev/null https://data.diegovalle.net/hoyodecrimen/pgj.csv.zip -H "$CACHE_INVALIDATE_HEADER:true"
     - name: Update database
       env:
         CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
