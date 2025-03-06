@@ -7,8 +7,7 @@ if (Sys.getenv("CI") == "true") {
 }
 
 tmp_pgj <-  tempfile("cuads", fileext = ".csv.gz")
-download.file(url,
-               tmp_pgj)
+download.file(url, tmp_pgj, quiet = TRUE)
 pgj <- read.csv(tmp_pgj, stringsAsFactors = FALSE)
 pgj <- pgj %>%
   filter(state_code == 9 & date >= "2019-01")
