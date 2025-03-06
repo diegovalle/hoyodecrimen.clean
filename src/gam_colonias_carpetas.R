@@ -19,27 +19,20 @@ col_sec <- read.csv("shps_2023/colonias-sectores.csv")
 col_sec <- select(col_sec, CVEUT, sector)
 col <- left_join(col, col_sec, by = "CVEUT")
 
-crimes <- filter(read.csv("clean-data/crime-lat-long-pgj.csv") , 
-                 crime == "HOMICIDIO DOLOSO", !is.na(lat), !is.na(long),
+crimes <- filter(dates$hom, crime == "HOMICIDIO DOLOSO", !is.na(lat), !is.na(long),
                  date <= dates$end, date >= dates$start) |>
   st_as_sf(coords=c("long","lat"), crs=4326)
 col$hom_count <- lengths(st_intersects(col, crimes))
 
-centr <- st_as_sf(col) |> mutate(cntr = st_centroid(geom),
-               within_dist = st_is_within_distance(cntr, dist = 100))
-nb_distance <- centr[["within_dist"]]
+# Set the polygons with errors to zero
+# 02-083 SAN PABLO 396-CONJ HAB SAN PABLO (U HAB)
+# 02-012 CRUZ ROJA TEPANTONGO (U HAB)
+col$hom_count[which(col$CVEUT %in% c("02-012", "02-083"))] <- 0
 
-nb_neighbor <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
-# For some reason polygon id 1125 is missing 
-names(nb_distance) <- attr(nb_neighbor, "region.id")
-names(nb_neighbor) <- attr(nb_neighbor, "region.id")
-nb_combined <- list()
-for(i in names(nb_neighbor)) {
-  nb_combined[[i]] <- unique(c(nb_neighbor[[i]], nb_distance[[i]]))
-}
-nb <- nb_neighbor
-
+nb <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
+names(nb) <- attr(nb, "region.id")
 setdiff(names(nb), col$ID)
+
 # Manually add some neighbors to Polygon '1276' - '12-115'
 nb[[1188]] <- append(nb[[1188]], as.integer(1276))
 nb[[1276]] <- append(nb[[1276]], as.integer(1188)) # island
@@ -99,7 +92,7 @@ print("running GAM")
 start.time <- Sys.time()
 m1 <- gam(hom_count ~ s(as.factor(id) + sector,
                         bs = "mrf",
-                        k = 1600,
+                        k = 1700,
                         xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
           control =  gam.control(nthreads = use_cores, trace = TRUE,
@@ -129,11 +122,12 @@ df_col$rate <- df_col$hom_count / df_col$SUMPOB1 * 10 ^ 5
 col$pred_rate <- df_col$pred_rate
 col$se.fit <- df_col$se.fit
 col$rate <- df_col$rate
+col$pred_rate_exp <- exp(col$pred_rate)
 
 
 p <- ggplot(col) +
   geom_sf(aes(fill =exp(pred_rate)), color = "#111111", linewidth = .06) +
-  scale_fill_viridis(option="H", limits = c(0, max(exp(col$pred_rate)))) +
+  scale_fill_viridis(option="H") +
   theme_minimal() +
   theme(legend.position = "top",
         axis.line = element_blank(),
@@ -162,7 +156,7 @@ p <- ggplot(col) +
                             " field smoother and a zero-inflated Poisson",
                             " \nresponse,",
                             "with each sector included as a treatment variable"))
-ggsave("graphs/cdmx-smooth-latest-HOMICIDIO.png",
+ggsave("graphs/cdmx-smooth-latest-HOMICIDIO_Carpetas.png",
        plot = p, dpi = 100, width = 20, height = 23, bg = "white")
 
 

@@ -2,10 +2,10 @@ if (Sys.getenv("CI") == "true") {
   inst_package <- function(packageurl) {
     install.packages(packageurl, repos=NULL, type="source")
   }
-
+  
   packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.5-28.tar.gz'
   inst_package(packageurl)
-
+  
   # packageurl <- 'https://cran.r-project.org/src/contrib/Archive/rgeos/rgeos_0.5-8.tar.gz	'
   # inst_package(packageurl)
   # 

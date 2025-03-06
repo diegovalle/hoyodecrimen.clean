@@ -8,11 +8,17 @@ page <- readLines("https://datos.cdmx.gob.mx/dataset/victimas-en-carpetas-de-inv
 page <- paste0(page, collapse = "")
 url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumu.*?\\.csv(?=")')
 
-tmp <- tempfile()
-download.file(destfile = tmp, url = url)
+temp_file <- file.path(tempdir(), basename(url))
+# Check if file already exists
+if (!file.exists(temp_file)) {
+  # Download the file if it doesn't exist
+  message("Downloading file...")
+  download.file(destfile = temp_file, url = url)
+} else {
+  message("File already exists in temporary directory. Using cached version.")
+}
 
-
-carpetas_latest <- read_csv(tmp, col_types = cols(
+carpetas_latest <- read_csv(temp_file, col_types = cols(
   anio_inicio = col_double(),
   mes_inicio = col_character(),
   fecha_inicio = col_date(format = ""),
@@ -50,8 +56,7 @@ carpetas_latest <- carpetas_latest %>% rename(
 carpetas_latest <- filter(carpetas_latest, Año >= 2019)
 df <- carpetas_latest
 
-
-
+source("src/solicitud.R")
 
 df$Año <- year(as.Date(df$fecha_hechos))
 

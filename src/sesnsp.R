@@ -1,7 +1,13 @@
 print("Cleaning SESNSP data from elcri.men")
 
+if (Sys.getenv("CI") == "true") {
+  url <- Sys.getenv("FUERO_ESTADOS_URL")
+} else {
+  url <- "https://data.diegovalle.net/elcrimen/nm-fuero-comun-estados.csv.gz"
+}
+
 tmp_pgj <-  tempfile("cuads", fileext = ".csv.gz")
-download.file("https://data.diegovalle.net/elcrimen/nm-fuero-comun-estados.csv.gz",
+download.file(url,
                tmp_pgj)
 pgj <- read.csv(tmp_pgj, stringsAsFactors = FALSE)
 pgj <- pgj %>%

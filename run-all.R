@@ -20,10 +20,7 @@ main <- function() {
   # Clean SESNSP data
   source(file.path("src", "sesnsp.R"))
   # Analysis
-  source(file.path("src", "gam_colonias.R"))
-  #register_stadiamaps(Sys.getenv("STADIA_KEY"), write = FALSE)
-  #source(file.path("src", "pointdensity.R"))
-  #source(file.path("src", "pointdensity_dates.R"))
+  source(file.path("src", "gam_colonias_carpetas.R"))
   source(file.path("src", "homicide_geojson.R"))
   source(file.path("src", "multilevel_gam.R"))
 }

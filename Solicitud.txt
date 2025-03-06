@@ -1,0 +1,24 @@
+PRESENTE
+
+Con fundamento en los artículos 6° de la Constitución Política de los Estados Unidos Mexicanos, 7° apartado D de la Constitución Política de la Ciudad de México, así como los artículos 1, 2, 3, 193, 196 y 199 de la Ley de Transparencia, Acceso a la Información Pública y Rendición de Cuentas de la Ciudad de México, solicito la siguiente información:
+
+INFORMACIÓN SOLICITADA
+
+Base de datos en formato abierto (CSV, Excel o similar) que contenga el registro de todas las VICTIMAS EN CARPETAS DE INVESTIGACIÓN de los delitos denunciados en la Ciudad de México con su latitud y longitud, incluyendo además la siguiente información:
+
+a) Año, fecha y hora de los hechos
+b) Tipo de delito (clasificación completa)
+c) Categoría del delito
+d) Ubicación geográfica exacta de los hechos, incluyendo:
+     - Coordenadas geográficas (LATITUD y LONGITUD)
+     - Alcaldía
+
+PERIODO SOLICITADO
+
+Del 1 de enero de 2024 a la fecha de la presente solicitud.
+
+Se solicita que la información sea proporcionada en formato de datos abiertos que permita su procesamiento y análisis.
+
+Sin otro particular, agradezco la atención prestada a esta solicitud.
+
+Atentamente,
