@@ -28,7 +28,9 @@ if (Sys.getenv("CI") == "true") {
 #   install.packages(names(.success)[!.success])
 #   sapply(names(.success)[!.success], require, character.only = TRUE)
 # }
-
+if (Sys.getenv("CI") == "true") {
+  install.packages("readxl")
+}
 
 library(gdata)
 library(zoo)
