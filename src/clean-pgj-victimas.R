@@ -56,7 +56,7 @@ carpetas_latest <- carpetas_latest %>% rename(
 carpetas_latest <- filter(carpetas_latest, Año >= 2019)
 df <- carpetas_latest
 
-source("src/solicitud.R")
+#source("src/solicitud.R")
 
 df$Año <- year(as.Date(df$fecha_hechos))
 
@@ -470,3 +470,34 @@ cuadrantes %>%
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
 
+is_inside_bbox <- function(lat, lon, lat_min, lat_max, lon_min, lon_max) {
+  # Check if lat and lon vectors have the same length
+  if (length(lat) != length(lon)) {
+    stop("lat and lon vectors must have the same length")
+  }
+  
+  # Validate bounding box coordinates
+  if (lat_min > lat_max) {
+    stop("lat_min must be less than or equal to lat_max")
+  }
+  if (lon_min > lon_max) {
+    stop("lon_min must be less than or equal to lon_max")
+  }
+  
+  # Check if points are within the bounding box
+  inside <- (lat >= lat_min) & (lat <= lat_max) & 
+    (lon >= lon_min) & (lon <= lon_max)
+  
+  return(inside)
+}
+
+mexico_city_inside <- is_inside_bbox(
+  lat = df$Latitud, 
+  lon = df$Longitud,
+  lat_min = 18.9, 
+  lat_max = 19.6,
+  lon_min = -99.5,  # More western longitude (larger negative number)
+  lon_max = -98.7   # More eastern longitude (smaller negative number)
+)
+if (!all(mexico_city_inside, na.rm = TRUE))
+  stop()

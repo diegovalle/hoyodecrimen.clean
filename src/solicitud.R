@@ -25,8 +25,8 @@ names(meses) <- 1:12
 si <- readxl::read_excel(temp_file, skip = 5)  |>
   filter(!is.na(ID_AP)) |>
   rename(
-    Latitud = `COORD. X`,
-    Longitud =`COORD. Y`,
+    Longitud= `COORD. X`,
+    Latitud = `COORD. Y`,
     Delito = `MODALIDAD - DELITO`,
     #Categoría.de.delito = categoria_delito,
     #Delito = DELITO,

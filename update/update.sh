@@ -6,7 +6,7 @@ set -euo pipefail #exit on error, undefined and prevent pipeline errors
 IFS=$'\n\t'
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-psql -d "$1" --set=dir="$DIR/../clean-data" -f "$DIR"/update.sql
+psql -d "$1" --set=dir="$DIR/../clean-data" -v ON_ERROR_STOP=on -f "$DIR"/update.sql
 psql -d "$1" -c "VACUUM ANALYZE crime_latlong;"
 psql -d "$1" -c "VACUUM ANALYZE cuadrantes;"
 psql -d "$1" -c "VACUUM ANALYZE pgj;"

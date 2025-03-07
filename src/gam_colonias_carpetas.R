@@ -173,3 +173,35 @@ write(list(as.data.frame(col) %>%
            list("start" = dates$start),  list("end" = dates$end)) %>%
         toJSON(dataframe = c("columns")),
       "clean-data/json/smooth-map-colonias-hom.json")
+
+is_inside_bbox <- function(lat, lon, lat_min, lat_max, lon_min, lon_max) {
+  # Check if lat and lon vectors have the same length
+  if (length(lat) != length(lon)) {
+    stop("lat and lon vectors must have the same length")
+  }
+  
+  # Validate bounding box coordinates
+  if (lat_min > lat_max) {
+    stop("lat_min must be less than or equal to lat_max")
+  }
+  if (lon_min > lon_max) {
+    stop("lon_min must be less than or equal to lon_max")
+  }
+  
+  # Check if points are within the bounding box
+  inside <- (lat >= lat_min) & (lat <= lat_max) & 
+    (lon >= lon_min) & (lon <= lon_max)
+  
+  return(inside)
+}
+
+mexico_city_inside <- is_inside_bbox(
+  lat = df$Latitud, 
+  lon = df$Longitud,
+  lat_min = 18.9, 
+  lat_max = 19.6,
+  lon_min = -99.5,  # More western longitude (larger negative number)
+  lon_max = -98.7   # More eastern longitude (smaller negative number)
+)
+if (!all(mexico_city_inside, na.rm = TRUE))
+  stop()

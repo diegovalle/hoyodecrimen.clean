@@ -38,7 +38,7 @@ CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(sector)),"date");
 CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(cuadrante)),"date");
 --CREATE INDEX ON "cuadrantes_new" ((upper(crime)),(upper(cuadrante)),"crime","date"); --~101MB
 CREATE INDEX ON "cuadrantes_new" ((upper(crime)),"date");
-CREATE INDEX cuadrantes_idx_sector_crime_date ON "cuadrantes_new" ("sector","crime","date");
+CREATE INDEX cuadrantes_idx_sector_crime_date2 ON "cuadrantes_new" ("sector","crime","date");
 
 -- pgj
 --DROP TABLE IF EXISTS pgj_new;
