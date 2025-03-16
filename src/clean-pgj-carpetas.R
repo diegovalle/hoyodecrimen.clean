@@ -59,7 +59,7 @@ df <- df %>% rename(Latitud = latitud,
                     Año = ao_hechos,
                     Mes = mes_hechos,
                     Delito = delito)
-#source("src/solicitud.R")
+source("src/solicitud_carpetas.R")
 df$Año <- year(as.Date(df$fecha_hechos))
 
 df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)

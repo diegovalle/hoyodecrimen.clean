@@ -56,7 +56,7 @@ carpetas_latest <- carpetas_latest %>% rename(
 carpetas_latest <- filter(carpetas_latest, Año >= 2019)
 df <- carpetas_latest
 
-#source("src/solicitud.R")
+source("src/solicitud_victimas.R")
 
 df$Año <- year(as.Date(df$fecha_hechos))
 

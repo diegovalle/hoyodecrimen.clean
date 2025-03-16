@@ -1,3 +1,16 @@
+
+
+# Create directories if they don't exist
+if (!dir.exists("clean-data")) {
+  dir.create("clean-data", recursive = TRUE)
+}
+if (!dir.exists("clean-data/json")) {
+  dir.create("clean-data/json", recursive = TRUE)
+}
+if (!dir.exists("graphs")) {
+  dir.create("graphs", recursive = TRUE)
+}
+
 if (Sys.getenv("CI") == "true") {
   inst_package <- function(packageurl) {
     install.packages(packageurl, repos=NULL, type="source")

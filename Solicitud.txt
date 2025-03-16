@@ -17,7 +17,7 @@ PERIODO SOLICITADO
 
 Del 1 de enero de 2024 a la fecha de la presente solicitud.
 
-Se solicita que la información sea proporcionada en formato de datos abiertos que permita su procesamiento y análisis.
+Se solicita que la información sea proporcionada en formato de datos abiertos (CSV, Excel o similar) que permita su procesamiento y análisis.
 
 Sin otro particular, agradezco la atención prestada a esta solicitud.
 

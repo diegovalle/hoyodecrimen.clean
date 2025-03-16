@@ -1,4 +1,4 @@
-print("GAM smooth model of homicide rates in the colonias of CDMX")
+print("GAM smooth model of homicide victimization rates in the colonias of CDMX")
 
 get_dates <- function() {
   df <- read.csv("clean-data/crime-lat-long-pgj_carpetas.csv") 
@@ -29,9 +29,20 @@ col$hom_count <- lengths(st_intersects(col, crimes))
 # 02-012 CRUZ ROJA TEPANTONGO (U HAB)
 col$hom_count[which(col$CVEUT %in% c("02-012", "02-083"))] <- 0
 
-nb <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
-names(nb) <- attr(nb, "region.id")
-setdiff(names(nb), col$ID)
+
+centr <- st_as_sf(col) |> mutate(cntr = st_centroid(geom),
+                                 within_dist = st_is_within_distance(cntr, dist = 750))
+nb_distance <- centr[["within_dist"]]
+
+nb_neighbor <- poly2nb(as_Spatial(st_as_sf(col)), row.names = col$ID)
+# For some reason polygon id 1125 is missing 
+names(nb_distance) <- attr(nb_neighbor, "region.id")
+names(nb_neighbor) <- attr(nb_neighbor, "region.id")
+nb_combined <- list()
+for(i in names(nb_neighbor)) {
+  nb_combined[[i]] <- unique(c(nb_neighbor[[i]], nb_distance[[i]]))
+}
+nb <- nb_neighbor
 
 # Manually add some neighbors to Polygon '1276' - '12-115'
 nb[[1188]] <- append(nb[[1188]], as.integer(1276))
@@ -80,6 +91,45 @@ nb[[1173]] <- append(nb[[1173]], as.integer(1171)) # island
 nb[[1175]] <- append(nb[[1175]], as.integer(1171))
 nb[[1171]] <- append(nb[[1171]], as.integer(1175)) # island
 
+nb[[1165]] <- append(nb[[1165]], as.integer(1171))
+nb[[1171]] <- append(nb[[1171]], as.integer(1165)) # 
+
+nb[[1169]] <- append(nb[[1169]], as.integer(1171))
+nb[[1171]] <- append(nb[[1171]], as.integer(1169)) # 
+
+nb[[1170]] <- append(nb[[1170]], as.integer(1171))
+nb[[1171]] <- append(nb[[1171]], as.integer(1170)) #
+
+nb[[855]] <- append(nb[[855]], as.integer(854))
+nb[[854]] <- append(nb[[854]], as.integer(855))
+
+nb[[855]] <- append(nb[[855]], as.integer(954))
+nb[[954]] <- append(nb[[954]], as.integer(855))
+
+nb[[855]] <- append(nb[[855]], as.integer(856))
+nb[[856]] <- append(nb[[856]], as.integer(855))
+
+nb[[855]] <- append(nb[[855]], as.integer(831))
+nb[[831]] <- append(nb[[831]], as.integer(855))
+
+nb[[855]] <- append(nb[[855]], as.integer(789))
+nb[[789]] <- append(nb[[789]], as.integer(855))
+
+
+nb[[1252]] <- append(nb[[1252]], as.integer(1188))
+nb[[1188]] <- append(nb[[1188]], as.integer(1252))
+
+nb[[1252]] <- append(nb[[1252]], as.integer(1236))
+nb[[1236]] <- append(nb[[1236]], as.integer(1252))
+
+
+
+nb[[1187]] <- append(nb[[1187]], as.integer(1335))
+nb[[1335]] <- append(nb[[1335]], as.integer(1187))
+
+nb[[1240]] <- append(nb[[1240]], as.integer(1335))
+nb[[1335]] <- append(nb[[1335]], as.integer(1240))
+
 col$SUMPOB1[col$SUMPOB1 < 100 ] <- 100
 
 df_col <- as.data.frame(col)
@@ -92,11 +142,11 @@ print("running GAM")
 start.time <- Sys.time()
 m1 <- gam(hom_count ~ s(as.factor(id) + sector,
                         bs = "mrf",
-                        k = 1700,
+                        k = 1600,
                         xt = list(nb = nb)) + offset(log(SUMPOB1)), #+ s(NOMDT, bs = "re") ,
           data = df_col,
-          control =  gam.control(nthreads = use_cores, trace = TRUE,
-                                 maxit = 50),
+          control = gam.control(nthreads = use_cores, trace = TRUE,
+                                maxit = 50),
           method = "GCV",
           family = ziP
 )
@@ -110,13 +160,13 @@ df.new <- df_col
 # pop column is equal to 1, so as to have log(population)=0,
 # but we need rates per 100K
 df.new$SUMPOB1 <- 100000
-pred <- predict(m1, newdata = df.new,  se.fit = TRUE)
+pred <- predict(m1, newdata = df.new, se.fit = TRUE)
 
 
-df_col$pred <-  pred$fit
+df_col$pred <- pred$fit
 df_col$se.fit <- pred$se.fit
 # rate from the model
-df_col$pred_rate  <-  df_col$pred # / df_col$SUMPOB1 * 10^5
+df_col$pred_rate <- df_col$pred # / df_col$SUMPOB1 * 10^5
 # raw rate
 df_col$rate <- df_col$hom_count / df_col$SUMPOB1 * 10 ^ 5
 col$pred_rate <- df_col$pred_rate
@@ -156,12 +206,12 @@ p <- ggplot(col) +
                             " field smoother and a zero-inflated Poisson",
                             " \nresponse,",
                             "with each sector included as a treatment variable"))
-ggsave("graphs/cdmx-smooth-latest-HOMICIDIO_Carpetas.png",
+ggsave("graphs/cdmx-smooth-latest-HOMICIDIO_carpetas.png",
        plot = p, dpi = 100, width = 20, height = 23, bg = "white")
 
 
 # ggplot(col, aes(low)) +
-#   geom_histogram(bins = 200)
+# geom_histogram(bins = 200)
 
 write(list(as.data.frame(col) %>%
              select( c("CVEUT", "SUMPOB1", "hom_count", 
@@ -170,7 +220,7 @@ write(list(as.data.frame(col) %>%
                     pred_rate = round(pred_rate, 1)) %>%
              rename("population" = "SUMPOB1") %>%
              arrange(CVEUT) , 
-           list("start" = dates$start),  list("end" = dates$end)) %>%
+           list("start" = dates$start), list("end" = dates$end)) %>%
         toJSON(dataframe = c("columns")),
       "clean-data/json/smooth-map-colonias-hom.json")
 
@@ -200,8 +250,8 @@ mexico_city_inside <- is_inside_bbox(
   lon = df$Longitud,
   lat_min = 18.9, 
   lat_max = 19.6,
-  lon_min = -99.5,  # More western longitude (larger negative number)
-  lon_max = -98.7   # More eastern longitude (smaller negative number)
+  lon_min = -99.5, # More western longitude (larger negative number)
+  lon_max = -98.7  # More eastern longitude (smaller negative number)
 )
 if (!all(mexico_city_inside, na.rm = TRUE))
   stop()

@@ -10,7 +10,6 @@ renv::restore(rebuild = FALSE, prompt = FALSE)
 cuadrantes_date <- 2023 # Use the 2023 or 2016 cuadrantes shapefile
 use_cores <- parallel::detectCores()
 
-
 main <- function() {
   source(file.path("src", "packages.R"))
   # Clean PGJ-CDMX Carpetas data
