@@ -1,6 +1,11 @@
+sheet_name_carpetas = "Incidencia"
+sheet_name_victimas = "Víctimas"
+rows_to_skip = 5
+filter_solicitud_date <- "2025-04-01"
+
 df <- local( {
   # URL of the file to download
-  file_url <-  "https://transparencia.cdmx.gob.mx/storage/app/uploads/public/67d/1d4/692/67d1d4692c2fa424655113.xlsx"
+  file_url <-  "https://transparencia.cdmx.gob.mx/storage/app/uploads/public/681/518/280/6815182800b0d874830575.xlsx"
   # Create temporary file path
   temp_file <- file.path(tempdir(), basename(file_url))
   
@@ -22,7 +27,8 @@ df <- local( {
   # Assign month numbers as names
   names(meses) <- 1:12
   
-  si <- readxl::read_excel(temp_file, skip = 4, sheet = "CARPETAS")  |>
+  si <- readxl::read_excel(temp_file, skip = rows_to_skip, 
+                           sheet = sheet_name_carpetas)  |>
     filter(!is.na(ID_AP)) |>
     rename(
       Longitud= `COORD. X`,
@@ -48,6 +54,6 @@ df <- local( {
   si <- filter(si ,fecha_hechos > max(df$fecha_hechos, na.rm = TRUE))
   si$hora_hechos <- hms::as_hms(si$hora_hechos)
   bind_rows(df, si)|>
-    filter(fecha_hechos < "2025-02-01")
+    filter(fecha_hechos < filter_solicitud_date)
 })
 

@@ -14,7 +14,7 @@ clean-data/cuadrantes-hoyodecrimen.csv
 solicitudes/*
 secrets-b2.yml
 campaign
-
+.envrc
 
 
 clean-data/json/crime_trends.json
