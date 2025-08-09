@@ -3,11 +3,12 @@ print("Cleaning PGJ-CDMX Victimas data")
 # https://datos.cdmx.gob.mx/dataset/victimas-en-carpetas-de-investigacion-fgj
 
 
-page <- readLines("https://datos.cdmx.gob.mx/dataset/victimas-en-carpetas-de-investigacion-fgj",
-                  warn = FALSE)
-page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumu.*?\\.csv(?=")')
+# page <- readLines("https://datos.cdmx.gob.mx/dataset/victimas-en-carpetas-de-investigacion-fgj",
+#                   warn = FALSE)
+# page <- paste0(page, collapse = "")
+# url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumu.*?\\.csv(?=")')
 
+url <- "https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumulado_2024_09.csv"
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
 if (!file.exists(temp_file)) {
@@ -56,7 +57,9 @@ carpetas_latest <- carpetas_latest %>% rename(
 carpetas_latest <- filter(carpetas_latest, Año >= 2019)
 df <- carpetas_latest
 
-source("src/solicitud_victimas.R")
+#source("src/solicitud_victimas.R")
+df <- filter(df, fecha_inicio < "2020-01-01")
+df <- bind_rows(df, get_victimas(delitos, min_date = "2020-01-01"))
 
 df$Año <- year(as.Date(df$fecha_hechos))
 
@@ -183,8 +186,8 @@ if (cuadrantes_date == 2023)
                       "TECOMITL", "TEOTONGO", "TEPEPAN", "TEPEYAC", "TEZONCO", "TICOMAN", 
                       "TLACOTAL", "TLATELOLCO", "TOPILEJO", "UNIVERSIDAD", "XOTEPINGO", 
                       "ZAPOTITLA", "ZARAGOZA")))
-ID <- filter(df, !is.na(df$Longitud))
-ID <- filter(ID, !is.na(ID$Latitud))
+ID <- filter(df, !is.na(df$Longitud) | !is.na(df$Latitud))
+#ID <- filter(ID, !is.na(ID$Latitud))
 coordinates(ID) <- ~ Longitud + Latitud
 slot(ID, "proj4string") <- CRS("+proj=longlat +datum=WGS84")
 ID <- spTransform(ID, slot(cuad_map, "proj4string") )

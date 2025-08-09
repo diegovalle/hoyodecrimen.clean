@@ -7,6 +7,7 @@ page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-f
 page <- paste0(page, collapse = "")
 url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
 
+
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
 if (!file.exists(temp_file)) {
@@ -59,7 +60,15 @@ df <- df %>% rename(Latitud = latitud,
                     Año = ao_hechos,
                     Mes = mes_hechos,
                     Delito = delito)
-source("src/solicitud_carpetas.R")
+
+delitos <- df |> select(Delito, Categoría.de.delito) |> unique()
+
+
+df <- filter(df, fecha_inicio < "2020-01-01")
+df <- bind_rows(df, get_carpetas(delitos, min_date = "2020-01-01"))
+
+
+
 df$Año <- year(as.Date(df$fecha_hechos))
 
 df$fecha_hechos <- paste(df$fecha_hechos, df$hora_hechos)
@@ -185,8 +194,8 @@ if (cuadrantes_date == 2023)
                       "TECOMITL", "TEOTONGO", "TEPEPAN", "TEPEYAC", "TEZONCO", "TICOMAN", 
                       "TLACOTAL", "TLATELOLCO", "TOPILEJO", "UNIVERSIDAD", "XOTEPINGO", 
                       "ZAPOTITLA", "ZARAGOZA")))
-ID <- filter(df, !is.na(df$Longitud))
-ID <- filter(ID, !is.na(ID$Latitud))
+ID <- filter(df, !is.na(df$Longitud) | !is.na(df$Latitud))
+#ID <- dplyr::filter(ID, !is.na(ID$Latitud))
 coordinates(ID) <- ~ Longitud + Latitud
 slot(ID, "proj4string") <- CRS("+proj=longlat +datum=WGS84")
 ID <- spTransform(ID, slot(cuad_map, "proj4string") )
@@ -471,3 +480,4 @@ cuadrantes %>%
     labs(title = "Crimen en la Ciudad de México") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes_carpetas.png", dpi = 100, width = 14, height = 7)
+
