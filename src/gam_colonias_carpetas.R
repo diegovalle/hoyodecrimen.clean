@@ -48,6 +48,9 @@ nb <- nb_neighbor
 nb[[1188]] <- append(nb[[1188]], as.integer(1276))
 nb[[1276]] <- append(nb[[1276]], as.integer(1188)) # island
 
+
+
+
 nb[[1305]] <- append(nb[[1305]], as.integer(1276))
 nb[[1276]] <- append(nb[[1276]], as.integer(1305))
 
@@ -129,6 +132,25 @@ nb[[1335]] <- append(nb[[1335]], as.integer(1187))
 
 nb[[1240]] <- append(nb[[1240]], as.integer(1335))
 nb[[1335]] <- append(nb[[1335]], as.integer(1240))
+
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1307))
+nb[[1307]] <- append(nb[[1307]], as.integer(1228)) # island
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1216))
+nb[[1216]] <- append(nb[[1216]], as.integer(1228)) # island
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1208))
+nb[[1208]] <- append(nb[[1208]], as.integer(1228)) # island
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1193))
+nb[[1193]] <- append(nb[[1193]], as.integer(1228)) # island
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1177))
+nb[[1177]] <- append(nb[[1177]], as.integer(1228)) # island
+
+nb[[1228]] <- append(nb[[1228]], as.integer(1312))
+nb[[1312]] <- append(nb[[1312]], as.integer(1228)) # island
 
 col$SUMPOB1[col$SUMPOB1 < 100 ] <- 100
 
