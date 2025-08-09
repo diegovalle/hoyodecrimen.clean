@@ -17,7 +17,7 @@ psql -d "$1" -c "VACUUM ANALYZE pgj;"
 for loc in "${locations[@]}"; do
   echo "Processing location: $loc"
   curl -X POST -F "CACHE_SECRET=$2" --header "fly-prefer-region: ${loc}" https://api.hoyodecrimen.com/clear-cache
-  (xargs -I % wget --header="fly-prefer-region: ${loc}" -q --show-progress --wait=14 --tries=3 -O /dev/null https://api.hoyodecrimen.com% <"$DIR"/urllist.txt) || true
+  (xargs -I % wget --header="fly-prefer-region: ${loc}" -q --show-progress --wait=2 --tries=3 -O /dev/null https://api.hoyodecrimen.com% <"$DIR"/urllist.txt) || true
   echo "--- Finished processing $loc ---"
   echo "" # Add a blank line for readability
 done
