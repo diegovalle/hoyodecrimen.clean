@@ -14,7 +14,10 @@ temp_file <- file.path(tempdir(), basename(url))
 if (!file.exists(temp_file)) {
   # Download the file if it doesn't exist
   message("Downloading file...")
-  download.file(destfile = temp_file, url = url)
+  download.file(destfile = temp_file,
+                url = url, 
+                method = "wget", 
+                extra = c("--no-check-certificate", "--tries=10"))
 } else {
   message("File already exists in temporary directory. Using cached version.")
 }

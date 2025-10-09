@@ -8,11 +8,15 @@
 # Sys.setenv(RENV_PATHS_ROOT = "/renv/.cache/R/Env")
 renv::restore(rebuild = FALSE, prompt = FALSE)
 cuadrantes_date <- 2023 # Use the 2023 or 2016 cuadrantes shapefile
-use_cores <- parallel::detectCores()
+use_cores <- ifelse(parallel::detectCores() < 8, 
+                    parallel::detectCores(),
+                    4)
 
 main <- function() {
   source(file.path("src", "packages.R"))
+  # Scrape html functions to get file locations
   source(file.path("src", "clean_fgj_carpetas.R"))
+  # Scrape html functions to get file locations
   source(file.path("src", "clean_fgj_victimas.R"))
   # Clean PGJ-CDMX Carpetas data
   source(file.path("src", "clean-pgj-carpetas.R"))
