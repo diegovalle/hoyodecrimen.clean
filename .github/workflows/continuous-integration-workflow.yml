@@ -24,7 +24,7 @@ jobs:
         DOCKER_USERNAME: ${{  secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{  secrets.DOCKER_PASSWORD }}
         FUERO_ESTADOS_URL: ${{ secrets.FUERO_ESTADOS_URL }}
-        FUERO_ESTADOS_URL: ${{ secrets.VICTIMAS_URL }}
+        VICTIMAS_URL: ${{ secrets.VICTIMAS_URL }}
       run: |
         docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         docker pull diegovalle/hoyodecrimen.clean:latest
