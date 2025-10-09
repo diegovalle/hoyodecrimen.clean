@@ -2,7 +2,7 @@
 ## Run as
 #"  ./update.sh $SQLALCHEMY_DATABASE_URI $CACHE_SECRET
 
-locations=("dfw" "qro")
+locations=("dfw" "lax" )
 
 set -euo pipefail #exit on error, undefined and prevent pipeline errors
 IFS=$'\n\t'
