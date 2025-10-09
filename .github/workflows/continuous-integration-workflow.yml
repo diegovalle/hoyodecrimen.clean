@@ -28,7 +28,7 @@ jobs:
       run: |
         docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         docker pull diegovalle/hoyodecrimen.clean:latest
-        docker run --entrypoint /bin/sh -e CI="true" -e FUERO_ESTADOS_URL="$FUERO_ESTADOS_URL" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
+        docker run --entrypoint /bin/sh -e CI="true" -e FUERO_ESTADOS_URL="$FUERO_ESTADOS_URL" -e VICTIMAS_URL="$VICTIMAS_URL" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
     - name: Collect artifacts if analysis failed
       env:
         ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
