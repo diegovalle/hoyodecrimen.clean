@@ -47,6 +47,7 @@ clean_fgj_carpetas <- function(file_url, dest, delitos) {
       fecha_hechos = `FECHA DE LOS HECHOS`,
       #Año = anio_hecho,
       hora_hechos = `HORA DE LOS HECHOS`,
+      ID_AP="ID_CI"
       #Mes = mes_hecho
     ) |>
     type_convert(col_types = cols(hora_hechos = col_time(format = ""))) |>

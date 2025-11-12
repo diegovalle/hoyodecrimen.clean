@@ -38,6 +38,7 @@ clean_fgj_victimas <- function(file_url1, file_url2, dest_carpetas, dest_victima
       fecha_hechos = `FECHA DE LOS HECHOS`,
       #Año = anio_hecho,
       hora_hechos = `HORA DE LOS HECHOS`,
+      ID_AP="ID_CI"
       #Mes = mes_hecho
     ) |>
     type_convert(col_types = cols(hora_hechos = col_time(format = ""))) |>
@@ -50,12 +51,12 @@ clean_fgj_victimas <- function(file_url1, file_url2, dest_carpetas, dest_victima
   victimas <- readxl::read_excel(temp_file2, skip = 1, 
                                  sheet = 1)  |>
     #filter(!is.na(ID)) |>
-    
+    rename_at(vars(matches("^ID_CI$")), function(x) "ID_AP") |>
     select(ID_AP)
   
 
   stopifnot(setdiff(carpetas$ID_CI, victimas$ID_AP) == numeric(0))
-  si <- left_join(victimas, carpetas, by = c("ID_AP" ="ID_CI"))
+  si <- left_join(victimas, carpetas, by = c("ID_AP" ="ID_AP"))
   
   delitos <- df |> select(Delito, Categoría.de.delito) |> unique()
   si <- left_join(si, delitos, by = c("Delito" = "Delito"))
