@@ -3,6 +3,6 @@
 Program to download and clean the data from 
 
 Carpetas de investigación FGJ de la Ciudad de México
-https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
+https://www.fgjcdmx.gob.mx/transparencia/incidencia-delictiva
 
 to be used by hoyodecrimen.com
