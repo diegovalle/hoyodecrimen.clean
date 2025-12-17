@@ -3,7 +3,7 @@ print("Cleaning PGJ-CDMX Carpetas data")
 # https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
 
 # page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
-                  warn = FALSE)
+#                  warn = FALSE)
 # page <- paste0(page, collapse = "")
 # url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
 # url <- "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
