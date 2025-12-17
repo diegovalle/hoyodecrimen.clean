@@ -8,7 +8,8 @@ print("Cleaning PGJ-CDMX Victimas data")
 # page <- paste0(page, collapse = "")
 # url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumu.*?\\.csv(?=")')
 
-url <- "https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumulado_2024_09.csv"
+# url <- "https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumulado_2024_09.csv"
+url <- "https://data.diegovalle.net/victimasFGJ_acumulado_2024_09.csv"
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
 if (!file.exists(temp_file)) {

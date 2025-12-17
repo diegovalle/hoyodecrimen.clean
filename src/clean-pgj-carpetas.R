@@ -2,11 +2,12 @@ print("Cleaning PGJ-CDMX Carpetas data")
 ## File available at:
 # https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
 
-page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
+# page <- readLines("https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico",
                   warn = FALSE)
-page <- paste0(page, collapse = "")
-url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
-
+# page <- paste0(page, collapse = "")
+# url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
+# url <- "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
+url <- "https://data.diegovalle.net/carpetasFGJ_acumulado_2025_01.csv"
 
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
