@@ -103,7 +103,7 @@ download_carpetas_files  <- function(list_url, base_url, min_date) {
   response <- httr::GET(list_url)
   
   if (httr::status_code(response) != 200) {
-    stop("Failed to download file list. HTTP status: ", status_code(response))
+    stop("Failed to download file list. HTTP status: ", httr::status_code(response))
   }
   
   # Parse the content and split by newlines

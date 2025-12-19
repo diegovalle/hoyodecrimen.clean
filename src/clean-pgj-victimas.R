@@ -9,7 +9,7 @@ print("Cleaning PGJ-CDMX Victimas data")
 # url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumu.*?\\.csv(?=")')
 
 # url <- "https://archivo.datos.cdmx.gob.mx/FGJ/victimas/victimasFGJ_acumulado_2024_09.csv"
-url <- "https://datos.diegovalle.net/victimasFGJ_acumulado_2024_09.csv"
+url <- "https://d.diegovalle.net/hoyodecrimen/victimasFGJ_acumulado_2024_09.csv.zip"
 
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
@@ -66,8 +66,8 @@ df <- carpetas_latest
 df <- filter(df, fecha_inicio < "2020-01-01")
 df <- bind_rows(df,
                 download_victimas_files(
-                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17/files.txt",
-                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17",
+                  "https://d.diegovalle.net/2025-12-17/files.txt",
+                  "https://d.diegovalle.net/2025-12-17",
                   min_date = "2020-01-01"))
 
 df$Año <- year(as.Date(df$fecha_hechos))

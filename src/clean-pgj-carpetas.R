@@ -7,7 +7,7 @@ print("Cleaning PGJ-CDMX Carpetas data")
 # page <- paste0(page, collapse = "")
 # url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
 # url <- "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
-url <- "https://datos.diegovalle.net/carpetasFGJ_acumulado_2025_01.csv"
+url <- "https://d.diegovalle.net/hoyodecrimen/carpetasFGJ_acumulado_2025_01.csv.zip"
 
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
@@ -71,8 +71,8 @@ delitos <- df |> select(Delito, Categoría.de.delito) |> unique()
 df <- filter(df, fecha_inicio < "2020-01-01")
 df <- bind_rows(df,
                 download_carpetas_files(
-                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17/files.txt",
-                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17",
+                  "https://d.diegovalle.net/2025-12-17/files.txt",
+                  "https://d.diegovalle.net/2025-12-17",
                   min_date = "2020-01-01"))
 
 
