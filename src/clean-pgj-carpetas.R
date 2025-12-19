@@ -6,7 +6,8 @@ print("Cleaning PGJ-CDMX Carpetas data")
 #                  warn = FALSE)
 # page <- paste0(page, collapse = "")
 # url <- str_extract(page, '(?<=href=")https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumu.*?\\.csv(?=")')
-url <- "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
+# url <- "https://archivo.datos.cdmx.gob.mx/FGJ/carpetas/carpetasFGJ_acumulado_2025_01.csv"
+url <- "https://datos.diegovalle.net/carpetasFGJ_acumulado_2025_01.csv"
 
 temp_file <- file.path(tempdir(), basename(url))
 # Check if file already exists
@@ -14,8 +15,8 @@ if (!file.exists(temp_file)) {
   # Download the file if it doesn't exist
   message("Downloading file...")
   download.file(destfile = temp_file,
-                url = url, 
-                method = "wget", 
+                url = url,
+                method = "wget",
                 extra = c("--no-check-certificate", "--tries=10"))
 } else {
   message("File already exists in temporary directory. Using cached version.")
@@ -68,7 +69,11 @@ delitos <- df |> select(Delito, Categoría.de.delito) |> unique()
 
 
 df <- filter(df, fecha_inicio < "2020-01-01")
-df <- bind_rows(df, get_carpetas(delitos, min_date = "2020-01-01"))
+df <- bind_rows(df,
+                download_carpetas_files(
+                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17/files.txt",
+                  "https://data.diegovalle.net/hoyodecrimen/2025-12-17",
+                  min_date = "2020-01-01"))
 
 
 
@@ -80,17 +85,17 @@ df$id <- 1:nrow(df)
 df$Latitud <- as.numeric(df$Latitud)
 df$Longitud <- as.numeric(df$Longitud)
 unique(df$Categoría.de.delito)
-df$Categoría.de.delito <- str_replace_all(df$Categoría.de.delito, 
+df$Categoría.de.delito <- str_replace_all(df$Categoría.de.delito,
                 c("ROBO A TRANSEUNTE EN V\u0099A P\u0082BLICA CON Y SIN VIOLENCIA" =
-                    "ROBO A TRANSEUNTE EN VÍA PÚBLICA CON Y SIN VIOLENCIA" , 
+                    "ROBO A TRANSEUNTE EN VÍA PÚBLICA CON Y SIN VIOLENCIA" ,
                   "ROBO A CASA HABITACI\u0085N CON VIOLENCIA" =
-                    "ROBO A CASA HABITACIÓN CON VIOLENCIA", 
+                    "ROBO A CASA HABITACIÓN CON VIOLENCIA",
                   "ROBO DE VEH\u0099CULO CON Y SIN VIOLENCIA" =
-                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" , 
+                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" ,
                   "VIOLACI\u0085N" =
-                    "VIOLACIÓN" , 
+                    "VIOLACIÓN" ,
                   "ROBO DE VEHÖCULO CON Y SIN VIOLENCIA" =
-                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" , 
+                    "ROBO DE VEHÍCULO CON Y SIN VIOLENCIA" ,
                   "VIOLACIàN" =
                     "VIOLACIÓN" ,
                   "ROBO A CASA HABITACIàN CON VIOLENCIA" =
@@ -143,7 +148,7 @@ if (cuadrantes_date == 2016) {
   cuad_map@data$Sector_hoy <- cuad_map@data$Sector
   cuad_map@data[which(cuad_map@data[, "Sector_hoy"] == "TAXQUEÑA"),
                 "Sector_hoy"] <- "TAXQUENA"
-  
+
   cuad_map@data[which(cuad_map@data[, "Sector"] == "TAXQUEÑA"),
                 "Sector"] <- "TAXQUEÑA"
   cuad_map@data[which(cuad_map@data[, "Sector2"] == "TAXQUEÑA"),
@@ -152,7 +157,7 @@ if (cuadrantes_date == 2016) {
 
 
 
-if (cuadrantes_date == 2016) 
+if (cuadrantes_date == 2016)
   expect_equal(sort(unique(cuad_map@data$Sector_hoy)),
                sort(c("SAN ANGEL", "TEOTONGO", "TLATELOLCO",
                       "BUENAVISTA", "MIXCALCO-HERALDO",
@@ -180,22 +185,22 @@ if (cuadrantes_date == 2016)
                       "DINAMO", "ARAGON", "ALPES", "CORREDOR-CENTRO",
                       "MORELOS", "EL YAQUI",
                       "PADIERNA", "TEPEPAN", "CUAJIMALPA")))
-if (cuadrantes_date == 2023) 
+if (cuadrantes_date == 2023)
   expect_equal(sort(unique(cuad_map@data$Sector_hoy)),
-               sort(c("ABASTO-REFORMA", "ALAMEDA", "ALPES", "ANGEL", "ARAGON", "ARENAL", 
-                      "ASTURIAS", "BUENAVISTA", "CENTRO", "CHAPULTEPEC", "CHURUBUSCO", 
-                      "CLAVERIA", "COAPA", "CONGRESO", "CONSULADO", "COYOACAN", "CUAJIMALPA", 
-                      "CUAUTEPEC", "CUCHILLA", "CUITLAHUAC", "CULHUACAN", "DEL VALLE", 
-                      "DINAMO", "EL YAQUI", "ESTRELLA", "FUENTE", "GRANJAS", "HORMIGA", 
-                      "HUIPULCO-HOSPITALES", "IZTACCIHUATL", "LA NORIA", "LA RAZA", 
-                      "LINDAVISTA", "MERCED-BALBUENA", "MILPA ALTA", "MIXQUIC", "MOCTEZUMA", 
-                      "MORELOS", "NAPOLES", "NARVARTE-ALAMOS", "NATIVITAS", "OASIS", 
-                      "PADIERNA", "PANTITLAN", "PLATEROS", "POLANCO-CASTILLO", "PORTALES", 
-                      "PRADERA", "QUETZAL", "QUIROGA", "ROMA", "SAN ANGEL", "SAN JERONIMO", 
-                      "SANTA CRUZ", "SANTA FE", "SOTELO", "TACUBA", "TACUBAYA", 
-                      "TAXQUENA", 
-                      "TECOMITL", "TEOTONGO", "TEPEPAN", "TEPEYAC", "TEZONCO", "TICOMAN", 
-                      "TLACOTAL", "TLATELOLCO", "TOPILEJO", "UNIVERSIDAD", "XOTEPINGO", 
+               sort(c("ABASTO-REFORMA", "ALAMEDA", "ALPES", "ANGEL", "ARAGON", "ARENAL",
+                      "ASTURIAS", "BUENAVISTA", "CENTRO", "CHAPULTEPEC", "CHURUBUSCO",
+                      "CLAVERIA", "COAPA", "CONGRESO", "CONSULADO", "COYOACAN", "CUAJIMALPA",
+                      "CUAUTEPEC", "CUCHILLA", "CUITLAHUAC", "CULHUACAN", "DEL VALLE",
+                      "DINAMO", "EL YAQUI", "ESTRELLA", "FUENTE", "GRANJAS", "HORMIGA",
+                      "HUIPULCO-HOSPITALES", "IZTACCIHUATL", "LA NORIA", "LA RAZA",
+                      "LINDAVISTA", "MERCED-BALBUENA", "MILPA ALTA", "MIXQUIC", "MOCTEZUMA",
+                      "MORELOS", "NAPOLES", "NARVARTE-ALAMOS", "NATIVITAS", "OASIS",
+                      "PADIERNA", "PANTITLAN", "PLATEROS", "POLANCO-CASTILLO", "PORTALES",
+                      "PRADERA", "QUETZAL", "QUIROGA", "ROMA", "SAN ANGEL", "SAN JERONIMO",
+                      "SANTA CRUZ", "SANTA FE", "SOTELO", "TACUBA", "TACUBAYA",
+                      "TAXQUENA",
+                      "TECOMITL", "TEOTONGO", "TEPEPAN", "TEPEYAC", "TEZONCO", "TICOMAN",
+                      "TLACOTAL", "TLATELOLCO", "TOPILEJO", "UNIVERSIDAD", "XOTEPINGO",
                       "ZAPOTITLA", "ZARAGOZA")))
 ID <- filter(df, !is.na(df$Longitud) | !is.na(df$Latitud))
 #ID <- dplyr::filter(ID, !is.na(ID$Latitud))
@@ -334,11 +339,11 @@ df %>%
 df <- df[!is.na(df$fecha_hechos), ]
 df <- filter(df, Año >= 2019)
 
-df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
-                                   "^(\\d{2})/(\\d{2})/(\\d{4})", 
+df$fecha_hechos <- str_replace_all(df$fecha_hechos,
+                                   "^(\\d{2})/(\\d{2})/(\\d{4})",
                                    "\\3-\\2-\\1")
-# df$fecha_hechos <- str_replace_all(df$fecha_hechos, 
-#                                    "^(\\d{4}-\\d{2}-\\d{2})T", 
+# df$fecha_hechos <- str_replace_all(df$fecha_hechos,
+#                                    "^(\\d{4}-\\d{2}-\\d{2})T",
 #                                    "\\1 ")
 
 #validate date format
@@ -354,15 +359,15 @@ na_dates <- df[is.na(df$hora_hechos), ]
 #df[is.na(df$hora_hechos), ]$hora_hechos <- "00:00"
 df <- df[!is.na(df$hora_hechos), ]
 
-df$fecha_hechos <- paste(str_sub(df$fecha_hechos, 1, 10), 
+df$fecha_hechos <- paste(str_sub(df$fecha_hechos, 1, 10),
                           df$hora_hechos)
 
 expect_true(all(str_detect(df$fecha_hechos,
                            "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:?\\d{0,2}")))
 
 # add missing seconds to fecha_hechos
-#df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16, 
-#        paste0(df$fecha_hechos, ":00"), 
+#df$fecha_hechos <- if_else(str_length(df$fecha_hechos) == 16,
+#        paste0(df$fecha_hechos, ":00"),
 #        df$fecha_hechos)
 df$fecha_hechos2 <- parse_date_time(df$fecha_hechos, "Ymd H:M:S")
 
@@ -427,14 +432,14 @@ write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj_carpetas.csv"),
 ### File for the cartodb map visualization
 extra_homicide <- data.frame(
   cuadrante = "S-4.4.7", # "S-3.6.7",
-  sector = "PADIERNA", 
+  sector = "PADIERNA",
   hex_idx = 17,
   crime="HOMICIDIO DOLOSO",
   date="2023-02-23",
   hour=NA,
   year=2023,
   month=2,
-  lat=19.266600098223492, 
+  lat=19.266600098223492,
   long=-99.22941787182792
 )
 
@@ -483,4 +488,3 @@ cuadrantes %>%
     labs(title = "Crimen en la Ciudad de México") +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes_carpetas.png", dpi = 100, width = 14, height = 7)
-

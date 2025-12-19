@@ -15,11 +15,11 @@ use_cores <- ifelse(parallel::detectCores() < 8,
 main <- function() {
   source(file.path("src", "packages.R"))
   # Scrape html functions to get file locations
-  source(file.path("src", "clean_fgj_carpetas.R"))
-  # Scrape html functions to get file locations
-  source(file.path("src", "clean_fgj_victimas.R"))
+  source(file.path("src", "functions_carpetas.R"))
   # Clean PGJ-CDMX Carpetas data
   source(file.path("src", "clean-pgj-carpetas.R"))
+  # Scrape html functions to get file locations
+  source(file.path("src", "functions_victimas.R"))
   # Clean PGJ-CDMX Víctimas data
   source(file.path("src", "clean-pgj-victimas.R"))
   # Clean SESNSP data
