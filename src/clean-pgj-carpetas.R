@@ -71,8 +71,8 @@ delitos <- df |> select(Delito, Categoría.de.delito) |> unique()
 df <- filter(df, fecha_inicio < "2020-01-01")
 df <- bind_rows(df,
                 download_carpetas_files(
-                  "https://d.diegovalle.net/2025-12-17/files.txt",
-                  "https://d.diegovalle.net/2025-12-17",
+                  "https://d.diegovalle.net/latest/files.txt",
+                  "https://d.diegovalle.net/latest",
                   min_date = "2020-01-01"))
 
 
