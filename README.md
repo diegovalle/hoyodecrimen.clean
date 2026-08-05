@@ -1,4 +1,4 @@
-# hoyodecrimen.clean
+# HoyoDeCrimen.clean
 
 This repository contains the data pipeline for [hoyodecrimen.com](https://hoyodecrimen.com). It provides scripts to automatically download, process, and clean the crime dataset published by the Mexico City Attorney General's Office (FGJ-CDMX).
 
