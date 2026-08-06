@@ -331,6 +331,20 @@ df %>%
 
 df <- df[!is.na(df$fecha_hechos), ]
 df <- filter(df, Año >= 2019)
+#Check whether the years are continuous (no gaps)
+years <- sort(unique(df$Año))
+
+min_years <- min(years)
+max_years <- max(years)
+message("max year: ", max_years)
+message("min year: ", min_years)
+missing_years <- setdiff(min(years):max(years), years)
+
+if (length(missing_years) == 0) {
+  message("Years are continuous")
+} else {
+  stop("Missing years: ", paste(missing_years, collapse = ", "))
+}
 
 df$fecha_hechos <- str_replace_all(df$fecha_hechos,
                                    "^(\\d{2})/(\\d{2})/(\\d{4})",
@@ -418,6 +432,18 @@ cuadrantes$count[is.na(cuadrantes$count)] <- 0
 cuadrantes$sector[is.na(cuadrantes$sector)] <- "NO ESPECIFICADO"
 cuadrantes <- cuadrantes[, c("cuadrante", "crime", "date", "count", "year",
                       "sector", "population")]
+
+
+#Check whether the years are continuous (no gaps)
+years <- sort(unique(cuadrantes$year))
+
+missing_years <- setdiff(min_years:max_years, years)
+
+if (length(missing_years) == 0) {
+  message("Years are continuous")
+} else {
+  stop("Missing years: ", paste(missing_years, collapse = ", "))
+}
 write.csv(cuadrantes, file.path("clean-data", "cuadrantes-pgj.csv"),
           row.names = FALSE)
 

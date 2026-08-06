@@ -96,6 +96,23 @@ get_carpetas <- function(delitos, min_date) {
   carpetas 
 }
 
+check_continuous_years <- function(files) {
+  years <- as.integer(sub("^([0-9]{4}).*", "\\1", files))
+  years <- sort(unique(years))
+  
+  if (any(diff(years) != 1)) {
+    stop(
+      sprintf(
+        "Years are not continuous: %s",
+        paste(years, collapse = ", ")
+      ),
+      call. = FALSE
+    )
+  }
+  
+  invisible(TRUE)
+}
+
 
 download_carpetas_files  <- function(list_url, base_url, min_date) {
   # Read the text file containing the list of Excel filenames
@@ -113,6 +130,7 @@ download_carpetas_files  <- function(list_url, base_url, min_date) {
   # Remove empty lines
   file_names <- file_names[file_names != ""]
   file_names <- file_names[str_detect(file_names, "carpetas")]
+  check_continuous_years(file_names)
   
   cat("Found", length(file_names), "files to process:\n")
   print(file_names)
