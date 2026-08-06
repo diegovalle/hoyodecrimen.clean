@@ -22,9 +22,15 @@ jobs:
     name: Clean FGJ-CDM data for hoyodecrimen.com
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+
       - name: Clean Data for HoyoDeCrimen
         env:
           DOCKER_USERNAME: ${{  secrets.DOCKER_USERNAME }}
@@ -35,6 +41,7 @@ jobs:
           docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           docker pull diegovalle/hoyodecrimen.clean:latest
           docker run --entrypoint /bin/sh -e CI="true" -e FUERO_ESTADOS_URL="$FUERO_ESTADOS_URL" -e VICTIMAS_URL="$VICTIMAS_URL" -v "$GITHUB_WORKSPACE":/hoyodecrimen diegovalle/hoyodecrimen.clean -c "cd /hoyodecrimen && Rscript run-all.R"
+
       - name: Collect artifacts if analysis failed
         env:
           ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
@@ -43,6 +50,7 @@ jobs:
         if: failure()
         run: |
           cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/* graphs/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+
       - name: upload charts, json and RData files
         env:
           ACCOUNT_ID: ${{  secrets.ACCOUNT_ID }}
@@ -50,6 +58,7 @@ jobs:
           BUCKET_ID: ${{  secrets.BUCKET_ID }}
         run: |
           cd "$GITHUB_WORKSPACE" && zip hoyodecrimen-clean.zip clean-data/*.csv clean-data/*.RData graphs/* clean-data/json/* && "$GITHUB_WORKSPACE"/upload_to_b2.sh hoyodecrimen-clean.zip
+
       - name: upload csv files to b2
         env:
           ACCOUNT_ID: ${{  secrets.ACCOUNT_ID_HOYODECRIMEN }}
@@ -60,6 +69,7 @@ jobs:
           zip -j crime-lat-long-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/crime-lat-long-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh crime-lat-long-pgj.csv.zip
           zip -j cuadrantes-pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/cuadrantes-pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh cuadrantes-pgj.csv.zip
           zip -j pgj.csv.zip "$GITHUB_WORKSPACE"/clean-data/pgj.csv && "$GITHUB_WORKSPACE"/upload_to_b2.sh pgj.csv.zip
+
       - name: Update database
         env:
           CACHE_SECRET: ${{ secrets.CACHE_SECRET }}
