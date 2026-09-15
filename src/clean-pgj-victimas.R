@@ -504,7 +504,7 @@ cuadrantes %>%
     xlab("fecha") +
     ylab("número de crímenes") +
     expand_limits(y = 0) +
-    labs(title = "Crimen en la Ciudad de México") +
+    labs(title = paste("Crimen en la Ciudad de México - ", max(cuadrantes$date))) +
     facet_wrap(~ crime, scale = "free_y")
 ggsave("graphs/crimes.png", dpi = 100, width = 14, height = 7)
 
