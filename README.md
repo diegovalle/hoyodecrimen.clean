@@ -5,7 +5,7 @@ This repository contains the data pipeline for [hoyodecrimen.com](https://hoyode
 ## Data Source
 
 * **Dataset:** [Carpetas de investigación FGJ de la Ciudad de México](https://www.fgjcdmx.gob.mx/transparencia/incidencia-delictiva)
-* **Publisher:** Fiscalía General de Justicia de la Ciudad de México (FGJ-CDMX)
+* **Publisher:** Fiscalía General de Justicia de la Ciudad de México (FGJ-CDMX).
 
 ## Purpose
 
